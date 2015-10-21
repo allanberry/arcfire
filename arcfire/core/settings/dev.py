@@ -1,7 +1,11 @@
 from .base import *
+import json
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = Path(PROJ_DIR, "_key.secret").read_file()
+# Get config credentials from external source,
+# outside of Git root for security.
+secret = json.loads(Path(PROJ_DIR.parent, "arcfire_config.json").read_file())
+
+SECRET_KEY = secret['SECRET_KEY']
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -16,7 +20,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'arcfire',
         'USER': 'aljabear',
-        'PASSWORD': Path(PROJ_DIR, "_db_pass.secret").read_file(),
+        'PASSWORD': secret['DATABASE_PASSWORD'],
         'HOST': '127.0.0.1',
         # 'PORT': '5432', #(using default)
         # 'TEST': {

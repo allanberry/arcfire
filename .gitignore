@@ -4,7 +4,6 @@
 *.sqlite3
 .DS_Store
 .coverage
-*.secret
 /media
 /media_test
 /static

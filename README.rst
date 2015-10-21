@@ -49,9 +49,13 @@ Building the project
 
 TODO. In addition to building the docs above, once some fixtures are in place and there's a regular need to rebuild the database, I will provide an Invoke script for this purpose.
 
-At the moment, the only thing (besides starting the database) that is necessary, is to provide a superuser:
+At the moment, the only things (besides starting the database) that are necessary, is to provide a superuser...
 
 ``./manage.py createsuperuser --settings=core.settings.dev``
+
+or to load the initial_data fixture:
+
+``./manage.py loaddata arcfire/fixtures/initial_data.json --settings=core.settings.dev``
 
 
 Starting the server (development)
