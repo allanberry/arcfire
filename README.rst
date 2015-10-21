@@ -19,7 +19,7 @@ So don't take the title too seriously.  A working title, a code name, which I pl
 
 
 Eventual deliverables
----
+---------------------
 
 * An API
 * An HTML site
@@ -28,20 +28,20 @@ Eventual deliverables
 
 
 Technical stack
----
+---------------
 
 I'm planning to build the bulk of this with Python, Django, and HTML5.  Eventually, when the API is settled, I may do something different on the front end: consume the beautiful Python with a JS framework, for example.  I'd like to stay with Python for as long as possible, though, to benefit from its classical structure.
 
 
 Docs
----
+----
 
 I just created some Sphinx docs for the first time.  I will expand as I learn more about this project, and as I write code.
 
 The tutorial to setup Sphinx is here:
 
-http://www.marinamele.com/2014/03/document-your-django-projects.html
+* http://www.marinamele.com/2014/03/document-your-django-projects.html
 
 To build the documentation:
 
-``docs$ make html``
+* ``docs$ make html``
