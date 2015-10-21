@@ -1,0 +1,121 @@
+This is just a brainstorm on a possible Django class structure.  This will change.
+
+---
+
+requirements
+    identify an environment
+
+ranking (coordinate):
+    2: xl   huge
+    1: l    big
+    0: m    normal (neutral, average, human-sized)
+   -1: s    small
+   -2: xs   tiny
+
+ranking (definite):
+    1: full
+   .5: half
+    0: zero
+
+defaults:
+    context: human
+    scale: 0
+    length: 1m
+    angle: 0rad
+    weight: 1g
+    location: 90°N, 0°W, sea level
+    color: #000
+    timestamp: 100000-01-01 00:00:00.0000
+    language: common
+
+- system
+    - page
+        • name
+        • description
+        • content
+        • created
+        • modified
+        • tag(s)
+
+    - erfcore
+        - domain (model)
+            - span
+                • boundaried coverage: defined from without
+            - set
+                • quantitative set: defined from within
+            - item
+                • name
+                • description
+                • scale
+                • distance from reference point
+                • sentience (!)
+                • entropy
+                • purpose(s)
+                • subject(s)
+                • type(s)
+                • time(s)
+                • location(s)
+                • characteristic(s)
+                • image(s)
+                • plan(s)
+                - relation(s), (ranked)
+                    • is caused by
+                    • is type of
+                    • is part of
+                    • is child of
+                    • is attracted to
+                    • is controlled by
+
+        - time (domain)
+            - period (span)
+            - moment (item)
+                • timestamp
+                • relation
+
+        - space (domain)
+            • region (span)
+            - place (item)
+                • latitude
+                • longitude
+                • altitude
+
+        - matter (domain)
+            • collection (set)
+            - body (item)
+                • approximation
+                • height
+                • width
+                • length
+                • weight
+                • direction
+                • velocity
+                • acceleration
+                - relation(s)
+                    • is owned by
+
+        - life (matter)
+            • habitat (span)
+            • group (set)
+            - lifeform
+                • species
+                • ki
+
+        - flora (life)
+            • garden (set)
+            • plant (item)
+
+        - fauna (life) 
+            • animal
+                • gender
+                - relation(s)
+                    • is kin to
+                    • is friend to
+                    • is mate of
+
+        - humanity (fauna)
+            • organization (group)
+            • tribe (group)    
+            - person
+                • memory(s)
+                - relation(s)
+                    
