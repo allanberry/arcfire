@@ -1,7 +1,7 @@
 from .base import *
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = Path(PROJ_DIR, "key.secret").read_file()
+SECRET_KEY = Path(PROJ_DIR, "_key.secret").read_file()
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -13,8 +13,15 @@ DEBUG = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'arcfire',
+        'USER': 'aljabear',
+        'PASSWORD': Path(PROJ_DIR, "_db_pass.secret").read_file(),
+        'HOST': '127.0.0.1',
+        # 'PORT': '5432', #(using default)
+        # 'TEST': {
+        #     'NAME': 'arcfire_test'
+        # }
     }
 }
 

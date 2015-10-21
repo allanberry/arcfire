@@ -27,10 +27,51 @@ Eventual deliverables
 * Lots of appendices, lateral narratives, maps, and other graphics.
 
 
+Getting Started
+===============
+
 Technical stack
 ---------------
 
-I'm planning to build the bulk of this with Python, Django, and HTML5.  Eventually, when the API is settled, I may do something different on the front end: consume the beautiful Python with a JS framework, for example.  I'd like to stay with Python for as long as possible, though, to benefit from its classical structure.
+I'm planning to build the bulk of this with Python, Django, PostgreSQL, and HTML5.  Ultimately, when the API is settled, I may do something different on the front end: consume a Python-generated JSON API with a JS framework, for example.  I'd like to stay with Python for as long as possible, though, to benefit from its classical structure.
+
+
+Database
+--------
+
+This software uses the open-source PostgreSQL database.  After installing Postgres, of course, you can start the database with this command:
+
+* ``postgres -D /usr/local/var/postgres``
+
+
+Building the project
+--------------------
+
+TODO. In addition to building the docs above, once some fixtures are in place and there's a regular need to rebuild the database, I will provide an Invoke script for this purpose.
+
+At the moment, the only thing (besides starting the database) that is necessary, is to provide a superuser:
+
+``./manage.py createsuperuser --settings=core.settings.dev``
+
+
+Starting the server (development)
+---------------------------------
+
+Should be as easy as:
+
+* ``./manage.py runserver --settings=core.settings.dev``
+
+
+Running the test suite (test)
+--------------------------
+
+TODO.  Note, a settings stub exists in the ``core/dev/settings.py`` file.  Alter or remove as necessary; not sure yet where this lives ala Postgres.
+
+
+Starting the server (production)
+--------------------
+
+TODO.
 
 
 Docs
