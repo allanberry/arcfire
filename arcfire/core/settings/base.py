@@ -25,7 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gunicorn',
     'django.contrib.humanize',
-    'django_extensions'
+    'django_extensions',
+    'arcfire'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -44,7 +45,6 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
