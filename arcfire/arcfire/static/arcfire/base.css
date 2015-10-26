@@ -1,0 +1,11 @@
+/* basic */
+
+body {
+    /* browser reset */ 
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
