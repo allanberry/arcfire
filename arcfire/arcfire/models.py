@@ -1,98 +1,165 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # # # # # # # # #
 # Bootstrapping #
 # # # # # # # # #
 
-class Domain(models.Model):
+class Common(models.Model):
     '''
-    The fundamental model in this system.
+    Abstract base class for elements.
     '''
-    name = models.CharField(max_length=100)
-    description = models.TextField(max_length=1000)
-    scale = 0
-    sentience = 0
-    entropy = 0
-    distance = 0
+    class Meta:
+        abstract = True
+        ordering = ['name']
 
-    attributes = models.ForeignKey(Attribute)
-    images = models.ForeignKey(Image)
-    kinds = models.ForeignKey(Kind)
-    locations = models.ForeignKey(Location)
-    purposes = models.ForeignKey(Purpose)
-    plans = models.ForeignKey(Plan)
-    relations = models.ForeignKey(Relation)
-    subjects = models.ForeignKey(Subject)
-    times = models.ForeignKey(Time)
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+    description = models.TextField()
+    scale = models.PositiveIntegerField(default=0)
+    sentience = models.DecimalField(
+        validators = [MinValueValidator(0), MaxValueValidator(1)])
 
 
-class Attribute(models.Model):
+class Keyword(Common):
     '''
+    A means of sorting elements.
     '''
-    pass
+    class Meta:
+        abstract = True
+    name = models.CharField(max_length=255, unique=True, required=True)
 
 
-class Image(models.Model):
+class Location(Common):
     '''
+    A set of geographic and temporal coordinates of elements.
     '''
-    pass
+    class Meta:
+        abstract = True
+    KINDS = (
+        ('begin', 'Begin'),
+        ('change', 'Change'),
+        ('end', 'End'),
+    )
+    longitude = DecimalField(max_digits=9, decimal_places=6)
+    latitude = DecimalField(max_digits=9, decimal_places=6)
+    altitude = DecimalField(decimal_places=3)
+    time = models.DateTimeField()
+    kind = models.CharField(
+        max_length=10,
+        choices=KINDS)
 
 
-class Kind(models.Model):
+class Property(Common):
     '''
+    Characteristics, adjectives of elements.
     '''
-    pass
+    class Meta:
+        abstract = True
+    name = models.CharField(max_length=255, unique=True, required=True)
 
 
-class Location(models.Model):
+class Purpose(Common):
     '''
+    Generic class to track what elements are for.
     '''
-    pass
+    class Meta:
+        abstract = True
+    name = models.CharField(max_length=255, unique=True, required=True)
 
 
-class Plan(models.Model):
-    '''
-    '''
-    pass
+# # # # # #
+# Level 1 #
+# # # # # #
 
-class Purpose(models.Model):
+class Element(Common):
     '''
+    Abstract base class for Level 1.
     '''
-    pass
+    class Meta(Common.Meta):
+        abstract = True
 
-
-class Relation(models.Model):
-    '''
-    '''
-    pass
-
-
-class Subject(models.Model):
-    '''
-    '''
-    pass
+    properties = models.ManyToManyField(Property)
+    purposes = models.ManyToManyField(Purpose)
+    keywords = models.ManyToManyField(Keyword)
 
 
-class Time(models.Model):
+class Relation(Common):
     '''
+    Relationships between elements.
     '''
-    pass
+    PREDICATES = (
+        ('child', 'is child of'),
+        ('cause', 'is caused by'),
+        ('type', 'is type of'),
+        ('part', 'is part of'),
+        ('attract', 'is attracted to'),
+        ('control', 'is controlled by'),
+        ('subject', 'is subject of')
+    )
+    subject = models.ForeignKey(Element)
+    recipient = models.ForeignKey(Element)
+    name = models.CharField(
+        max_length=10, required=True, choices=PREDICATES, default='child')
 
 
-class Span(Domain):
+class Aspect(Common):
+    '''
+    A type of representation, like an angle or perspective, usually for Image or Plan.
+    '''
+    CHOICES = (
+        ('primary', 'Primary'),
+        ('secondary', 'Secondary'),
+        ('front', 'Front'),
+        ('back', 'Back'),
+        ('left', 'Left Side'),
+        ('right', 'Right Side'),
+        ('top', 'Top'),
+        ('bottom', 'Bottom'),
+        ('internal', 'Internal'),
+        ('external', 'External'),
+    )
+    name = models.CharField(
+        max_length=10, unique=True, required=True,
+        choices=CHOICES, default='primary')
+
+
+class Image(Common):
+    '''
+    A representation of an element, usually graphical.  Contrast with 'Plan'.
+    '''
+    element = models.ForeignKey(Element)
+    aspect = models.ForeignKey(Aspect)
+
+    image = models.ImageField(width_field=width, height_field=height)
+    width = models.PositiveIntegerField()
+    height = models.PositiveIntegerField()
+
+
+class Plan(Common):
+    '''
+    A model or defining document for an element, usually graphical.  Contrast with 'Image'.
+    '''
+    element = models.ForeignKey(Element)
+    aspect = models.ForeignKey(Aspect)
+
+    file = models.FileField()
+
+
+class Span(Element):
     '''
     Defined by boundaries.
     '''
-    pass
+    boundary = models.ManyToManyField(Location)
 
 
-class Item(Domain):
+class Item(Element):
     '''
     Defined by characteristics.
     '''
-    pass
+    location = models.ForeignKey(Location)
 
 
-# # # # # # # #
-# Derivatives #
-# # # # # # # #
+# # # # # #
+# Level 2 #
+# # # # # #
