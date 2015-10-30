@@ -7,7 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Common(models.Model):
     '''
-    Abstract base class for elements, for bootstrapping.
+    Abstract base class for elements, for bootstrapping.  Basically the most generic metadata, used throughout.
     '''
     class Meta:
         abstract = True
@@ -15,28 +15,77 @@ class Common(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     description = models.TextField()
-    scale = models.PositiveIntegerField(default=0)
+
+    created_at = models.DateTimeField(editable=False)
+    updated_at = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        '''
+        On save, update timestamps
+        as per http://stackoverflow.com/a/1737078/652626
+        '''
+        if not self.id:
+            self.created = django.utils.timezone.now()
+        self.modified = django.utils.timezone.now()
+        return super(User, self).save(*args, **kwargs)
+
+
+class LifeMixin(models.Model):
+    '''
+    Breathes life, as a mixin.
+    '''
+    class Meta:
+        abstract = True
+
+    GENDERS = (
+        ('female', 'Female'),
+        ('male', 'Male'),
+        ('none', 'None'),
+        ('other', 'Other'),
+    )
+    gender = models.CharField(max_length=10, choices=GENDERS)
+    species = models.CharField(max_length=255, help_text='TODO: Use controlled vocabulary.')
     ki = models.DecimalField(
         validators=[MinValueValidator(0), MaxValueValidator(1)],
-        default=0, max_digits=4, decimal_places=3)
-
-    keywords = models.ManyToManyField("self")
-    properties = models.ManyToManyField("self")
-    purposes = models.ManyToManyField("self")
-    relations = models.ManyToManyField("self", through='RelationJoin', symmetrical=False)
+        default=0.5, max_digits=4, decimal_places=3, help_text="Choose a number between 0.0 and 1.0.  The default is 0.5, which represents the life-force of Joe the Plumber.  0.0 is empty space, somewhere past Pluto.  1.0 is God himself. See wiki/ki for more information.")
 
 
-class Collectable(models.Model):
+class CollectableMixin(models.Model):
     '''
     Abstract base class for groups of elements.
     '''
     class Meta:
         abstract = True
+
+    collection = []
     # I'm not entirely sure what I want to do with this yet, since fields need
     # to be defined in each subclass instead of overridden.  This makes things
     # more complex than I like, but probably OK.  In the meantime, I'll
     # leave this here and give it methods soon, hopefully generic to work
     # for all subclasses.
+
+
+
+class AspectMixin(models.Model):
+    '''
+    A type of representation, like an angle or perspective, usually for Picture or Plan.
+    '''
+    class Meta:
+        abstract = True
+    CHOICES = (
+        ('primary', 'Primary'),
+        ('secondary', 'Secondary'),
+        ('front', 'Front'),
+        ('back', 'Back'),
+        ('left', 'Left Side'),
+        ('right', 'Right Side'),
+        ('top', 'Top'),
+        ('bottom', 'Bottom'),
+        ('internal', 'Internal'),
+        ('external', 'External'),
+    )
+    aspect = models.CharField(
+        max_length=10, unique=True, blank=False, choices=CHOICES, default='primary')
 
 
 class RelationJoin(models.Model):
@@ -68,60 +117,88 @@ class RelationJoin(models.Model):
         max_length=10, blank=False, choices=PREDICATES, default='related')
 
 
-class Aspect(models.Model):
+class Picture(AspectMixin, Common):
     '''
-    A type of representation, like an angle or perspective, usually for Picture or Plan.
+    An "a posteriori" representation of something, usually raster, usually graphical.  Contrast with 'Plan'.
     '''
-    CHOICES = (
-        ('primary', 'Primary'),
-        ('secondary', 'Secondary'),
-        ('front', 'Front'),
-        ('back', 'Back'),
-        ('left', 'Left Side'),
-        ('right', 'Right Side'),
-        ('top', 'Top'),
-        ('bottom', 'Bottom'),
-        ('internal', 'Internal'),
-        ('external', 'External'),
-    )
-    aspect = models.CharField(
-        max_length=10, unique=True, blank=False, choices=CHOICES, default='primary')
 
-
-class Picture(Common):
-    '''
-    An "a posteriori" representation of an element, usually raster, usually graphical.  Contrast with 'Plan'.
-    '''
     width = models.PositiveIntegerField(help_text="In pixels.")
     height = models.PositiveIntegerField(help_text="In pixels.")
-    aspect = models.ForeignKey(Aspect, related_name="pictures")
     image = models.ImageField(width_field=width, height_field=height)
 
 
-class Plan(Common):
+class Plan(AspectMixin, Common):
     '''
-    An "a priori" representation of an element, usually vector, usually graphical.  Contrast with 'Picture'.
+    An "a priori" representation of something, usually vector, usually graphical.  Contrast with 'Picture'.
     '''
-    aspect = models.ForeignKey(Aspect, related_name="plans")
     file = models.FileField()
 
 
+class Location(Common):
+    '''
+    A set of geographic and temporal coordinates for an item.
+    '''
 
-# # # # # # # # # # #
-# Level 1: Elements #
-# # # # # # # # # # #
+    KINDS = (
+        ('begin', 'Begin'),
+        ('change', 'Change'),
+        ('end', 'End'),
+    )
+    time = models.DateTimeField()
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, help_text="In decimal.")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, help_text="In meters.")
+    altitude = models.DecimalField(max_digits=9, decimal_places=3, help_text="In meters.")
+    kind = models.CharField(max_length=10, choices=KINDS, default='change')
+
+
+class Keyword(Common):
+    '''
+    A grass-roots means of classifying something.
+    '''
+    pass
+
+
+class Property(Common):
+    '''
+    A characteristic or attribute of something.
+    '''
+    pass
 
 
 class Item(Common):
+    '''
+    The manifestation of the abstract attributes in "Common", but with access to subsequent models like picture and plan.
+    '''
+
+    keywords = models.ManyToManyField(Keyword)
+    properties = models.ManyToManyField(Property)
+    locations = models.ManyToManyField(Location)
+
+    # relations = models.ManyToManyField("self", through='RelationJoin', symmetrical=False)
+
+    pictures = models.ManyToManyField(Picture)
+    plans = models.ManyToManyField(Plan)
+
+    scale = models.PositiveIntegerField(default=0, help_text='The magnitude of a thing, in whole numbers.  0 is average/medium/normal/default/human-sized.  e.g.: -2=XS, -1=S, 0=M, 1=L, 2=XL, 3=2XL and so on.')
+
+
+# # # # # # # # # # # # #
+# Level 1: Basic Items  #
+# # # # # # # # # # # # #
+
+class Event(Item):
+    '''
+    Basic Verb.
+    '''
+    pass
+
+
+class Thing(Item):
     '''
     Basic Noun.
     '''
     mass = models.DecimalField(max_digits=12, decimal_places=3,
         help_text="In kilograms.")
-
-    pictures = models.ManyToManyField(Picture)
-    plans = models.ManyToManyField(Plan)
-
     height = models.DecimalField(max_digits=12, decimal_places=3,
         help_text="In meters.")
     width = models.DecimalField(max_digits=12, decimal_places=3,
@@ -133,67 +210,51 @@ class Item(Common):
     # approximation
 
 
-class Collection(Collectable, Item):
+# # # # # # # # # # # # # #
+# Level 2: Compound Items #
+# # # # # # # # # # # # # #
+
+
+class Person(LifeMixin, Thing):
     '''
-    A selected group of items.
+    A human being.
     '''
-    items = models.ManyToManyField(Item, related_name="collections")
+    name_secondary = models.CharField(verbose_name='Given Name', max_length=255)
+
+    def __init__(self, *args, **kwargs):
+        self._meta.get_field('species').default = 'homo sapiens'
+        self._meta.get_field('mass').default = 75
+        self._meta.get_field('height').default = 1.75
+        self._meta.get_field('gender').default = 'female'
+        self._meta.get_field('name').verbose_name = 'Family Name'
+        super(Person, self).__init__(*args, **kwargs)
 
 
-class Location(Common):
+class Place(LifeMixin, Location):
     '''
-    A set of geographic and temporal coordinates for an item.
+    Some places have an energy all their own.
     '''
-    item = models.ForeignKey(Item)
-    KINDS = (
-        ('begin', 'Begin'),
-        ('change', 'Change'),
-        ('end', 'End'),
-    )
-    time = models.DateTimeField()
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, help_text="In decimal.")
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, help_text="In meters.")
-    altitude = models.DecimalField(max_digits=9, decimal_places=3, help_text="In meters.")
-    kind = models.CharField(max_length=10, choices=KINDS)
+    pass
 
 
-class Event(Common):
+class Collection(CollectableMixin, Thing):
     '''
-    Basic Verb.
+    A group of things.
     '''
-    # Not sure what I'm going to do with this yet, but it seems necessary to include.
+    pass
 
-
-# # # # # #
-# Level 2 #
-# # # # # #
-
-
-class Life(Item):
+class Group(CollectableMixin, Person):
     '''
-    A Living thing.
+    A group of people.
     '''
-
-    GENDERS = (
-        ('female', 'Female'),
-        ('male', 'Male'),
-        ('none', 'None'),
-        ('other', 'Other'),
-    )
-    gender_default = None
-    species_default = None
-
-    gender = models.CharField(max_length=10, blank=True, null=True,
-        choices=GENDERS, default=gender_default)
-    species = models.CharField(max_length=255, blank=True, null=True,
-        default=species_default)
+    pass
 
 
-class Memory(Common):
-    '''
-    Something a living thing takes with them.
-    '''
-    life = models.ForeignKey(Life, related_name="memories")
+# class Memory(Thing):
+#     '''
+#     Something a living thing takes with them.
+#     '''
+#     life = models.ForeignKey(Life, related_name="memories")
 
 
 # class Plant(Life):
@@ -210,19 +271,10 @@ class Memory(Common):
 #     pass
 
 
-class Person(Life):
-    '''
-    A human being.
-    '''
-    class Meta:
-        proxy = True
-
-    species_default = 'homo sapiens'
-
-
-class Group(Collectable, Person):
-    '''
-    An organization, class, tribe or family of human beings.
-    '''
-    # cls = Person
-    members = models.ManyToManyField(Person, related_name="groups")
+#
+# class Group(Collectable, Person):
+#     '''
+#     An organization, class, tribe or family of human beings.
+#     '''
+#     # cls = Person
+#     members = models.ManyToManyField(Person, related_name="groups")
