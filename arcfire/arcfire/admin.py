@@ -5,17 +5,17 @@ from .models import Person, Property, Picture
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     fields = ('name', 'name_secondary', 'description',  'gender', 'properties', 'height', 'mass', 'pictures', 'slug')
-    list_display = ('name', 'name_secondary', 'gender')
+    list_display = ('__str__', 'gender')
     prepopulated_fields = {'slug': ('name', 'name_secondary')}
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-    fields = ('name', 'description', 'slug')
-    list_display = ('name', 'slug')
+    fields = ('name', 'slug')
+    list_display = ('__str__', 'slug')
     prepopulated_fields = {'slug': ('name',)}
 
 @admin.register(Picture)
 class PictureAdmin(admin.ModelAdmin):
     fields = ('name', 'image', 'aspect', 'description', 'width', 'height', 'slug')
-    list_display = ('name', 'aspect')
+    list_display = ('__str__', 'aspect')
     prepopulated_fields = {'slug': ('aspect', 'name')}
