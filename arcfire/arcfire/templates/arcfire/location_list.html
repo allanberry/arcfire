@@ -1,0 +1,86 @@
+{% extends 'arcfire/model_list.html' %}
+{% load staticfiles %}
+
+
+{% block js_libs %}
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="//d3js.org/topojson.v1.min.js"></script>
+{% endblock js_libs %}
+
+{% block page_content %}
+
+
+{% if object_list %}
+<ul>
+{% for obj in object_list %}
+  <li>{{ obj }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No {{ model_name_plural }} found.</p>
+{% endif %}
+
+
+<div class="map"></div>
+
+<script>
+
+var width = 960,
+    height = 960,
+    speed = 1e-2;
+
+var projection = d3.geo.transverseMercator()
+    .scale((width + 1) / 2 / Math.PI)
+    .translate([width / 2, height / 2])
+    .precision(.5);
+
+var graticule = d3.geo.graticule();
+
+var canvas = d3.select(".map").append("canvas")
+    .attr("width", width)
+    .attr("height", height);
+
+var context = canvas.node().getContext("2d");
+
+var path = d3.geo.path()
+    .projection(projection)
+    .context(context);
+
+d3.json("{% static 'arcfire/world-110m.js' %}", function(error, topo) {
+  if (error) throw error;
+
+  var land = topojson.feature(topo, topo.objects.land),
+      borders = topojson.mesh(topo, topo.objects.countries, function(a, b) { return a !== b; }),
+      grid = graticule();
+
+  d3.timer(function(elapsed) {
+    projection.rotate([speed * elapsed, 0]);
+
+    context.clearRect(0, 0, width, height);
+
+    context.beginPath();
+    path(land);
+    context.fillStyle = "#222";
+    context.fill();
+
+    context.beginPath();
+    path(borders);
+    context.lineWidth = .5;
+    context.strokeStyle = "#fff";
+    context.stroke();
+
+    context.beginPath();
+    path(grid);
+    context.lineWidth = .5;
+    context.strokeStyle = "rgba(119,119,119,.5)";
+    context.stroke();
+  });
+});
+
+d3.select(self.frameElement).style("height", height + "px");
+
+</script>
+
+
+
+{% endblock page_content %}

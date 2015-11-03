@@ -8,14 +8,24 @@ from arcfire.models import (Picture, Location, Plan, Keyword, Property, Item,
 class HomePageView(TemplateView):
     template_name = "arcfire/home.html"
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(HomePageView, self).get_context_data(*args, **kwargs)
+        context.update({
+            'window_title': 'Home',
+        })
+        return context
 
 
 class ModelListView(ListView):
     template_name = "arcfire/model_list.html"
 
+    def get_window_title(self):
+        return self.model._meta.verbose_name_plural
+
     def get_context_data(self, *args, **kwargs):
         context = super(ModelListView, self).get_context_data(*args, **kwargs)
         context.update({
+            'window_title': self.get_window_title(),
             'model_name': self.model._meta.verbose_name,
             'model_name_plural': self.model._meta.verbose_name_plural,
         })
@@ -27,6 +37,7 @@ class PictureListView(ModelListView):
 
 
 class LocationListView(ModelListView):
+    template_name = "arcfire/location_list.html"
     model = Location
 
 

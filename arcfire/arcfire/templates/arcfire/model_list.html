@@ -1,8 +1,11 @@
 {% extends 'arcfire/base.html' %}
 
 {% block main %}
+{% block page_title %}
 <h1>{{ model_name_plural | title }}</h1>
+{% endblock page_title %}
 
+{% block page_content %}
 {% if object_list %}
 <ul>
 {% for obj in object_list %}
@@ -12,5 +15,6 @@
 {% else %}
 <p>No {{ model_name_plural }} found.</p>
 {% endif %}
+{% endblock page_content %}
 
 {% endblock main %}

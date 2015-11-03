@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ page_title }}</title>
+    <title>Arcfire{% if window_title %} | {{ window_title | title }}{% endif %}</title>
 
     <!-- Presentation Metadata -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +13,14 @@
     <!-- Pure CSS -->
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+
+    {% block css_libs %}
+    {% endblock css_libs %}
+
+    {% block js_libs %}
+    {% endblock js_libs %}
+
+    <link rel="stylesheet" href="{% static 'arcfire/base.css' %}">
 
 </head>
 <body>
