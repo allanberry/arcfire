@@ -1,23 +1,37 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>{{ page_title }}</title>
+
+    <!-- Presentation Metadata -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+
+    <!-- Pure CSS -->
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+
 </head>
 <body>
+
     <main>
     {% block main %}
-    <h1>Hello World</h1>
+        <h1>Hello World</h1>
     {% endblock main %}
     </main>
 
     <nav>
     {% block nav %}
-    <h3>Navigation</h3>
-    <ul>
-        {% for item in nav_items %}
-        <li><a href="{% url item.url_name %}">{{ item.name_plural | title }}</a></li>
-        {% endfor %}
-    </ul>
+        <h3>Navigation</h3>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            {% for m in nav_models %}
+            <li><a href="{% url m.url_name %}">{{ m.name_plural | title }}</a></li>
+            {% endfor %}
+        </ul>
     {% endblock nav %}
     </nav>
 
