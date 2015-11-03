@@ -171,7 +171,7 @@ class Location(Common):
         ('relative', 'Relative')
     )
     position = models.CharField(max_length=10, choices=POSITIONS, blank=False, default='relative', help_text='"Absolute" positions establish a new reference point for sublocations: they are always relative to the ABSOLUTE_LOCATION in settings.  "Relative" positions are relative to their nearest "Absolute" parent, otherwise they are also relative to ABSOLUTE_LOCATION.  See: wiki/position') # TODO: set REFERENCE_LOCATION
-    time = models.DateTimeField(blank=True, null=True) # TODO: set default to REFERENCE_LOCATION.time
+    time = models.DateTimeField(blank=True, null=True) # TODO: set default to D.time
     longitude = models.DecimalField(max_digits=9, decimal_places=6,
         blank=True, null=True,
         help_text="In decimal.")
