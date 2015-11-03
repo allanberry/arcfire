@@ -266,6 +266,9 @@ class Person(LifeMixin, Thing):
     '''
     A human being.
     '''
+    class Meta:
+        verbose_name_plural = 'people'
+
     name_secondary = models.CharField(verbose_name='Given Name', max_length=255,
         blank=True)
 
