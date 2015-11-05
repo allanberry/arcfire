@@ -14,6 +14,18 @@ ALLOWED_HOSTS = [
 ]
 
 DEBUG = True
+TEMPLATE_DEBUG = True
+
+# If debug is enabled, Compressor is turned off; # this will manually activate
+# it.  This is important to provide Django tags (like 'static') to JS files
+COMPRESS_ENABLED = True
+
+# However, in development, we had better override the JSMinFilter
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.template.TemplateFilter',
+    # 'compressor.filters.jsmin.JSMinFilter',
+]
+
 
 DATABASES = {
     'default': {

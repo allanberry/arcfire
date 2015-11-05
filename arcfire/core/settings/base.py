@@ -7,9 +7,9 @@ BASE_DIR =  Path(__file__).ancestor(3)
 # arcfire_proj
 PROJ_DIR = BASE_DIR.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
+# overridden in templates
+DEBUG = False
+TEMPLATE_DEBUG = False
 
 STATICFILES_DIRS = (BASE_DIR.child('arcfire').child('static'),)
 
@@ -20,14 +20,15 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'gunicorn',
     'django.contrib.humanize',
+    'django.contrib.messages',
+    'django.contrib.sessions',
+    'django.contrib.staticfiles',
+    'compressor',
     'django_extensions',
+    'gunicorn',
     'rest_framework',
-    'arcfire'
+    'arcfire',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -39,6 +40,19 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# Explicitly set because of Compressor
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+# Comporessors to apply to JS (using 'compress' tag)
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.template.TemplateFilter',
+    'compressor.filters.jsmin.JSMinFilter',
 ]
 
 ROOT_URLCONF = 'core.urls'

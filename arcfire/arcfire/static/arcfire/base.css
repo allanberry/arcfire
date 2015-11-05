@@ -8,16 +8,6 @@ body {
     border: 1px solid silver;
 }
 
-.stroke {
-  fill: none;
-  stroke: #000;
-  stroke-width: 3px;
-}
-
-.fill {
-  fill: #fff;
-}
-
 .graticule {
   fill: none;
   stroke: #777;
@@ -26,11 +16,5 @@ body {
 }
 
 .land {
-  fill: #222;
-}
-
-.boundary {
-  fill: none;
-  stroke: #fff;
-  stroke-width: .5px;
+  fill: black;
 }
