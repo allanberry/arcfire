@@ -1,6 +1,6 @@
 from django.contrib import admin
 # from .models import Picture, Plan, Location, Keyword, Property, Event, Thing, Person, Place, Collection, Group
-from .models import Person, Property, Picture
+from .models import Person, Property, Picture, Place
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
@@ -19,3 +19,9 @@ class PictureAdmin(admin.ModelAdmin):
     fields = ('name', 'image', 'aspect', 'description', 'width', 'height', 'slug')
     list_display = ('__str__', 'aspect')
     prepopulated_fields = {'slug': ('aspect', 'name')}
+
+@admin.register(Place)
+class PlaceAdmin(admin.ModelAdmin):
+    fields = ('name', 'description', 'longitude', 'latitude', 'altitude', 'time', 'kind', 'position', 'sublocations', 'ki', 'slug')
+    list_display = ('name', 'longitude', 'latitude', 'altitude', 'time')
+    prepopulated_fields = {'slug': ('name',)}
