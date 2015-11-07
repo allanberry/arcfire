@@ -42,14 +42,16 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Explicitly set because of Compressor
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
 
-# Comporessors to apply to JS (using 'compress' tag)
+COMPRESS_PRECOMPILERS = (
+    ('text/scss', 'sass --scss {infile} {outfile}'),
+)
+
 COMPRESS_JS_FILTERS = [
     'compressor.filters.template.TemplateFilter',
     'compressor.filters.jsmin.JSMinFilter',

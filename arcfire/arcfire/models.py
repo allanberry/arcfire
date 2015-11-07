@@ -15,6 +15,7 @@ class Common(models.Model):
 
     name = models.CharField(max_length=255, blank=True)
     slug = models.SlugField(unique=True, blank=False)
+    
     description = models.TextField(blank=True)
 
     created_at = models.DateTimeField(
@@ -50,8 +51,8 @@ class LifeMixin(models.Model):
         ('other', 'Other'),
     )
     gender = models.CharField(max_length=10, choices=GENDERS, blank=True)
-    species = models.CharField(max_length=255, blank=True,
-        help_text='TODO: Use controlled vocabulary.')
+    # species = models.CharField(max_length=255, blank=True,
+    #     help_text='TODO: Use controlled vocabulary.')
     ki = models.DecimalField(
         validators=[MinValueValidator(0), MaxValueValidator(1)],
         blank=False, null=True,
@@ -154,6 +155,7 @@ class Plan(AspectMixin, Common):
     '''
     file = models.FileField(blank=False, null=True)
 
+
 class Location(Common):
     '''
     A set of geographic and temporal coordinates for an item.
@@ -194,7 +196,7 @@ class Keyword(Common):
     '''
     A grass-roots means of classifying something.
     '''
-    pass
+    subkeywords = models.ManyToManyField("self", blank=True, help_text="Allows a structured category hierarchy for classification browsing.")
 
 
 class Property(Common):
@@ -251,9 +253,9 @@ class Thing(Item):
     length = models.DecimalField(max_digits=12, decimal_places=3,
         help_text="In meters.",
         blank=True, null=True)
-    heading = models.DecimalField(max_digits=4, decimal_places=3,
-        blank=True, null=True,
-        help_text="In radians.  The angle between the direction the item is pointing and true North.")
+    # heading = models.DecimalField(max_digits=4, decimal_places=3,
+    #     blank=True, null=True,
+    #     help_text="In radians.  The angle between the direction the item is pointing and true North.")
     # approximation
 
 
@@ -275,7 +277,7 @@ class Person(LifeMixin, Thing):
     def __init__(self, *args, **kwargs):
         self._meta.get_field('name').blank = False
         self._meta.get_field('name').verbose_name = 'Family Name'
-        self._meta.get_field('species').default = 'homo sapiens'
+        # self._meta.get_field('species').default = 'homo sapiens'
         # self._meta.get_field('mass').default = 75
         # self._meta.get_field('height').default = 1.75
         # self._meta.get_field('gender').default = 'female'

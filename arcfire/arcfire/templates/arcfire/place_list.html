@@ -1,17 +1,14 @@
 {% extends 'arcfire/model_list.html' %}
 {% load staticfiles %}
-{% load compress %}
-
 
 {% block js_libs %}
-    <script src="//d3js.org/d3.v3.min.js"></script>
-    <script src="//d3js.org/topojson.v1.min.js"></script>
+  <script src="//d3js.org/d3.v3.min.js"></script>
+  <script src="//d3js.org/topojson.v1.min.js"></script>
 {% endblock js_libs %}
 
-{% block page_content %}
 
-<div id="map" ></div>
-
+{% block figure %}
+<h1 id="page_title">Places</h1>
 
 {% if object_list %}
 <ul>
@@ -23,8 +20,12 @@
 <p>No {{ model_name_plural }} found.</p>
 {% endif %}
 
-<script>
+{% endblock figure %}
 
+
+{% block ground %}
+<div id="map" />
+<script>
 var width = 500,
     height = 500;
 
@@ -105,5 +106,4 @@ d3.json(world, function(error, world) {
 });
 
 </script>
-
-{% endblock page_content %}
+{% endblock ground %}

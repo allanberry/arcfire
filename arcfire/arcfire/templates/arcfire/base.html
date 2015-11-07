@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load compress %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,30 +12,43 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
 
-    <!-- Pure CSS -->
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
-
-    <!-- Typography Start -->
-    <link rel="stylesheet" href="{% static 'arcfire/typography.css' %}">
-    <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-
-
-    {% block css_libs %}
-    {% endblock css_libs %}
-
     {% block js_libs %}
     {% endblock js_libs %}
 
-    <link rel="stylesheet" href="{% static 'arcfire/base.css' %}">
+    {% block js %}
+    {% endblock js %}
+
+    {% block css_libs %}
+        <!-- Pure CSS -->
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+    {% endblock css_libs %}
+    
+    {% block css %}
+        {% compress css %}
+        <link rel="stylesheet" type="text/scss" href="{% static 'arcfire/base.scss' %}">
+        <link rel="stylesheet" type="text/scss" href="{% static 'arcfire/typography.scss' %}">
+        {% endcompress %}
+
+        <link rel='stylesheet' type='text/css'  href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700'>
+        <link rel='stylesheet' type='text/css'  href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic'>
+    {% endblock css %}
 
 </head>
 <body>
-
     <main>
     {% block main %}
-        <h1>Hello World</h1>
+        <section id="figure">
+        {% block figure %}
+            <h1 id="page_title">Figure</h1>
+        {% endblock figure %}
+        </section>
+
+        <section id="ground">
+        {% block ground %}
+            <h3>Ground</h3>
+        {% endblock ground %}
+        </section>
     {% endblock main %}
     </main>
 
@@ -48,6 +63,5 @@
         </ul>
     {% endblock nav %}
     </nav>
-
 </body>
 </html>
