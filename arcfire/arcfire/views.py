@@ -1,8 +1,10 @@
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from arcfire.models import (Picture, Location, Plan, Keyword, Property, Item,
-    Event, Person, Place, Collection, Group)
+from arcfire.models import (Picture, Plan, Keyword, Property, Item,
+    Event, Person, Place, Collection, Group,
+    #Location, 
+    )
 
 
 class HomePageView(TemplateView):
@@ -32,13 +34,17 @@ class ModelListView(ListView):
         return context
 
 
+class PlaceListView(ModelListView):
+    template_name = "arcfire/place_list.html"
+    model = Place
+
+
 class PictureListView(ModelListView):
     model = Picture
 
 
-class LocationListView(ModelListView):
-    template_name = "arcfire/location_list.html"
-    model = Location
+# class LocationListView(ModelListView):
+#     model = Location
 
 
 class PlanListView(ModelListView):
@@ -63,10 +69,6 @@ class EventListView(ModelListView):
 
 class PersonListView(ModelListView):
     model = Person
-
-
-class PlaceListView(ModelListView):
-    model = Place
 
 
 class CollectionListView(ModelListView):

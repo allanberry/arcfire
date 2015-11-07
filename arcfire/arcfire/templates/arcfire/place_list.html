@@ -1,0 +1,109 @@
+{% extends 'arcfire/model_list.html' %}
+{% load staticfiles %}
+{% load compress %}
+
+
+{% block js_libs %}
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="//d3js.org/topojson.v1.min.js"></script>
+{% endblock js_libs %}
+
+{% block page_content %}
+
+<div id="map" ></div>
+
+
+{% if object_list %}
+<ul>
+{% for obj in object_list %}
+  <li>{{ obj }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No {{ model_name_plural }} found.</p>
+{% endif %}
+
+<script>
+
+var width = 500,
+    height = 500;
+
+var projection = d3.geo.orthographic()
+    .scale(500)
+    .translate([width / 2, height / 2])
+    .clipAngle(90)
+    .rotate([0, -90]);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var svg = d3.select("#map").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var graticule = d3.geo.graticule();
+
+// var λ = d3.scale.linear()
+//     .domain([0, width])
+//     .range([-180, 180]);
+
+// var φ = d3.scale.linear()
+//     .domain([0, height])
+//     .range([90, -90]);
+
+// svg.on("mousemove", function() {
+//   var p = d3.mouse(this);
+//   projection.rotate([λ(p[0]), φ(p[1])]);
+//   svg.selectAll("path").attr("d", path);
+// });
+
+var world = "{% static 'arcfire/world-50m.js' %}"
+
+d3.json(world, function(error, world) {
+    if (error) throw error;
+
+    var places = [
+          {
+            name: "North Pole",
+            location: {
+              latitude: 90,
+              longitude: 0
+            }
+          },
+          {
+            name: "Newcastle, Australia",
+            location: {
+              latitude: -32.92669,
+              longitude: 151.77892
+            }
+          }
+        ]
+
+    svg.append("path")
+        .datum(graticule)
+        .attr("class", "graticule")
+        .attr("d", path);
+
+    svg.append("path")
+      .datum(topojson.feature(world, world.objects.land))
+      .attr("class", "land")
+      .attr("d", path);
+
+    // add circles to svg
+    svg.selectAll(".pin")
+        .data(places)
+        .enter().append("circle", ".pin")
+        .attr("r", 5)
+        .attr("fill", "red")
+        .attr("transform", function(d) {
+        return "translate(" + projection([
+            d.location.longitude,
+            d.location.latitude
+        ]) + ")";
+    });
+
+});
+
+</script>
+
+{% endblock page_content %}
