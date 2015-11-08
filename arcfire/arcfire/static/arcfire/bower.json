@@ -1,0 +1,21 @@
+{
+  "name": "arcfire",
+  "homepage": "https://github.com/allanberry/arcfire",
+  "authors": [
+    "Allan Berry <allan.berry@gmail.com>"
+  ],
+  "description": "Arcfire is an exercise in modular web-based fiction.",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "bootstrap-sass-official#~3.3.5",
+    "jquery": "~2.1.4"
+  }
+}

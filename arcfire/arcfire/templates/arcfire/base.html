@@ -7,60 +7,55 @@
     <title>Arcfire{% if window_title %} | {{ window_title | title }}{% endif %}</title>
 
     <!-- Presentation Metadata -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
-
-    {% block js_libs %}
-    {% endblock js_libs %}
-
+    
     {% block js %}
+        <script src="{% static 'arcfire/js/base.js' %}"></script>
     {% endblock js %}
 
-    {% block css_libs %}
-        <!-- Pure CSS -->
-        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
-    {% endblock css_libs %}
-    
     {% block css %}
         {% compress css %}
-        <link rel="stylesheet" type="text/scss" href="{% static 'arcfire/base.scss' %}">
-        <link rel="stylesheet" type="text/scss" href="{% static 'arcfire/typography.scss' %}">
+        <link rel="stylesheet" type="text/scss" href="{% static 'arcfire/css/base.scss' %}" />
         {% endcompress %}
 
-        <link rel='stylesheet' type='text/css'  href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700'>
-        <link rel='stylesheet' type='text/css'  href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic'>
+        <link rel='stylesheet' type='text/css'  href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700' />
+        <link rel='stylesheet' type='text/css'  href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic,700italic' />
     {% endblock css %}
 
 </head>
 <body>
     <main>
     {% block main %}
-        <section id="figure">
+        <div id="figure">
         {% block figure %}
             <h1 id="page_title">Figure</h1>
         {% endblock figure %}
-        </section>
+        </div>
 
-        <section id="ground">
+        <div id="ground">
         {% block ground %}
-            <h3>Ground</h3>
+            <h2 class="sr_only">Ground</h2>
         {% endblock ground %}
-        </section>
+        </div>
     {% endblock main %}
     </main>
 
     <nav>
     {% block nav %}
-        <h3>Navigation</h3>
-        <ul>
-            <li><a href="{% url 'home' %}">Home</a></li>
-            {% for m in nav_models %}
-            <li><a href="{% url m.url_name %}">{{ m.name_plural | title }}</a></li>
-            {% endfor %}
-        </ul>
+        <div></div>
+        <div id="nav_container">
+            <h3>Navigation</h3>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <p class="lead">asdfasdfsdf</p>
+                {% for m in nav_models %}
+                <li><a href="{% url m.url_name %}">{{ m.name_plural | title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
     {% endblock nav %}
     </nav>
 </body>

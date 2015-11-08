@@ -18,7 +18,7 @@ TEMPLATE_DEBUG = True
 
 # If debug is enabled, Compressor is turned off; # this will manually activate
 # it.  This is important to provide Django tags (like 'static') to JS files
-COMPRESS_ENABLED = True
+# COMPRESS_ENABLED = False
 
 # However, in development, we had better override the JSMinFilter
 COMPRESS_JS_FILTERS = [

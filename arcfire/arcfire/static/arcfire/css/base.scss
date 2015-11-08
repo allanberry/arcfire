@@ -1,0 +1,63 @@
+@import '../bower_components/bootstrap-sass/assets/stylesheets/bootstrap-custom';
+
+@import 'typography';
+
+/* basic */
+
+body {
+    /*background-color: green;*/
+}
+
+/* * * * * */
+/* FIGURE  */
+/* * * * * */
+
+#page_title {}
+
+/* * * * * */
+/* GROUND  */
+/* * * * * */
+
+main {
+    #figure {
+        background-color: hsla(180, 50%, 50%, .5);
+        border: 1px solid blue;
+    }
+
+    #ground {
+        background-color: hsla(0, 50%, 50%, .5);
+        border: 1px solid red;
+
+        #map {
+            svg {
+                border: 1px solid silver;
+            }
+
+            .graticule {
+                fill: none;
+                stroke: #777;
+                stroke-width: .5px;
+                stroke-opacity: .5;
+            }
+
+            .land {
+                fill: black;
+            }
+        }
+    }
+}
+
+nav {
+    background-color: hsla(127, 50%, 50%, .5);
+    border: 1px solid green;
+}
+
+.sr_only {
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}

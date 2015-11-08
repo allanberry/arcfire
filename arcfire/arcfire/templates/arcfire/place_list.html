@@ -1,10 +1,11 @@
 {% extends 'arcfire/model_list.html' %}
 {% load staticfiles %}
 
-{% block js_libs %}
-  <script src="//d3js.org/d3.v3.min.js"></script>
-  <script src="//d3js.org/topojson.v1.min.js"></script>
-{% endblock js_libs %}
+{% block js %}
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="//d3js.org/topojson.v1.min.js"></script>
+    {{ block.super }}
+{% endblock js %}
 
 
 {% block figure %}
@@ -58,7 +59,7 @@ var graticule = d3.geo.graticule();
 //   svg.selectAll("path").attr("d", path);
 // });
 
-var world = "{% static 'arcfire/world-50m.js' %}"
+var world = "{% static 'arcfire/js/world-50m.js' %}"
 
 d3.json(world, function(error, world) {
     if (error) throw error;
