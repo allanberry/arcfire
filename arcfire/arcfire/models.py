@@ -2,9 +2,9 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-# # # # # # # # #
-# Bootstrapping #
-# # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# Level 0: base abstract and infrastructure classes #
+# # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 class Common(models.Model):
     '''
@@ -16,8 +16,6 @@ class Common(models.Model):
     name = models.CharField(max_length=255, blank=True)
     slug = models.SlugField(unique=True, blank=False)
     
-    description = models.TextField(blank=True)
-
     created_at = models.DateTimeField(
         editable=False, blank=False, null=True)
     updated_at = models.DateTimeField(
@@ -59,20 +57,19 @@ class LifeMixin(models.Model):
         default=0.5, max_digits=4, decimal_places=3, help_text="Choose a number between 0.0 and 1.0.  The default is 0.5, which represents the life-force of Joe the Plumber.  0.0 is empty space, somewhere past Pluto.  1.0 is God himself. See wiki/ki for more information.") # TODO: wiki/ki
 
 
-class CollectableMixin(models.Model):
+class CompoundMixin(models.Model):
     '''
     Abstract base class for groups of elements.
     '''
     class Meta:
         abstract = True
 
-    collection = []
+    members = []
     # I'm not entirely sure what I want to do with this yet, since fields need
     # to be defined in each subclass instead of overridden.  This makes things
     # more complex than I like, but probably OK.  In the meantime, I'll
     # leave this here and give it methods soon, hopefully generic to work
     # for all subclasses.
-
 
 
 class AspectMixin(models.Model):
@@ -81,6 +78,7 @@ class AspectMixin(models.Model):
     '''
     class Meta:
         abstract = True
+
     CHOICES = (
         ('primary', 'Primary'),
         ('secondary', 'Secondary'),
@@ -97,8 +95,17 @@ class AspectMixin(models.Model):
         blank=False,
         max_length=10, unique=True, choices=CHOICES, default='primary')
 
+    caption = models.TextField(blank=True)
 
-class RelationJoin(models.Model):
+    # def alt_text(self): # TODO
+    #     return ??
+
+
+# # # # # # # # # #
+# Utility tables  #
+# # # # # # # # # #
+
+class Relation(Common):
     '''
     Relationships between elements.
     '''
@@ -132,41 +139,10 @@ class RelationJoin(models.Model):
         return '{} {} {}'.format(source, predicate, target)
 
 
-class Picture(AspectMixin, Common):
-    '''
-    An "a posteriori" representation of something, usually raster, usually graphical.  Contrast with 'Plan'.
-    '''
-
-    width = models.PositiveIntegerField(help_text="In pixels.",
-        blank=False, null=True)
-    height = models.PositiveIntegerField(help_text="In pixels.",
-        blank=False, null=True)
-    image = models.ImageField(width_field=width, height_field=height,
-        blank=False, null=True)
-
-    # def image_tag(self): # TODO
-    #     return '<img src="{}" width="{}" height="{}" />'.format(self.url, self.width, self.height)
-
-
-
-class Plan(AspectMixin, Common):
-    '''
-    An "a priori" representation of something, usually vector, usually graphical.  Contrast with 'Picture'.
-    '''
-    file = models.FileField(blank=False, null=True)
-
-
 class Location(Common):
     '''
     A set of geographic and temporal coordinates for an item.
     '''
-
-    KINDS = (
-        ('begin', 'Begin'),
-        ('change', 'Change'),
-        ('end', 'End'),
-    )
-    kind = models.CharField(max_length=10, choices=KINDS, blank=True)
 
     POSITIONS = (
         ('absolute', 'Absolute'),
@@ -183,6 +159,7 @@ class Location(Common):
     altitude = models.DecimalField(max_digits=9, decimal_places=3,
         blank=True, null=True,
         help_text="In meters.")
+    # approximate = TODO
 
     sublocations = models.ManyToManyField("self", blank=True, help_text="The main location indicates the reference point (e.g. the center); if sublocations are relative, they are  to this point.")
 
@@ -205,20 +182,49 @@ class Property(Common):
     '''
     class Meta:
         verbose_name_plural = 'properties'
-    pass
+
+
+class Picture(AspectMixin, Common):
+    '''
+    An "a posteriori" representation of something, usually raster, usually graphical.  Contrast with 'Plan'.
+    '''
+
+    width = models.PositiveIntegerField(help_text="In pixels.",
+        blank=False, null=True)
+    height = models.PositiveIntegerField(help_text="In pixels.",
+        blank=False, null=True)
+    image = models.ImageField(width_field=width, height_field=height,
+        blank=False, null=True)
+
+    # def image_tag(self): # TODO
+    #     return '<img src="{}" width="{}" height="{}" />'.format(self.url, self.width, self.height)
+
+
+class Plan(AspectMixin, Common):
+    '''
+    An "a priori" representation of something, usually vector, usually graphical.  Contrast with 'Picture'.
+    '''
+    file = models.FileField(blank=False, null=True)
+
+
+
+# # # # # # # # # # # # #
+# Level 1: Basic Items  #
+# # # # # # # # # # # # #
 
 
 class Item(Common):
     '''
-    The manifestation of the abstract attributes in "Common", but with access to subsequent models like picture and plan.
+    The abstract attributes in "Common", but with access to subsequent models like picture and plan.
     '''
+    class Meta:
+        abstract = True
 
+    relations = models.ManyToManyField("self", through='Relation', symmetrical=False)
+
+    locations = models.ManyToManyField(Location, blank=True)
     keywords = models.ManyToManyField(Keyword, blank=True)
     properties = models.ManyToManyField(Property, blank=True)
-    locations = models.ManyToManyField(Location, blank=True)
-
-    # relations = models.ManyToManyField("self", through='RelationJoin', symmetrical=False)
-
     pictures = models.ManyToManyField(Picture, blank=True)
     plans = models.ManyToManyField(Plan, blank=True)
 
@@ -226,20 +232,16 @@ class Item(Common):
         help_text='The magnitude of a thing, in whole numbers.  0 is average/medium/normal/default/human-sized.  e.g.: -2=XS, -1=S, 0=M, 1=L, 2=XL, 3=2XL and so on.')
 
 
-# # # # # # # # # # # # #
-# Level 1: Basic Items  #
-# # # # # # # # # # # # #
-
 class Event(Item):
     '''
-    Basic Verb.
+    Basic Event.
     '''
-    pass
+    # duration = TODO
 
 
 class Thing(Item):
     '''
-    Basic Noun.
+    Basic Thing.
     '''
     mass = models.DecimalField(max_digits=12, decimal_places=3,
         help_text="In kilograms.",
@@ -256,11 +258,19 @@ class Thing(Item):
     # heading = models.DecimalField(max_digits=4, decimal_places=3,
     #     blank=True, null=True,
     #     help_text="In radians.  The angle between the direction the item is pointing and true North.")
-    # approximation
+
+    # approximation TODO here?
+
+
+class Place(Item):
+    '''
+    Basic Place.
+    '''
+    pass
 
 
 # # # # # # # # # # # # # #
-# Level 2: Compound Items #
+# Level 2: Complex Items  #
 # # # # # # # # # # # # # #
 
 
@@ -291,24 +301,21 @@ class Person(LifeMixin, Thing):
         else:
             return 'No Name'
 
+    def age(self): # TODO
+        pass
+
     def __str__(self):
         return self.name_full()
 
 
-class Place(LifeMixin, Location):
-    '''
-    Some places have an energy all their own.
-    '''
-    pass
-
-
-class Collection(CollectableMixin, Thing):
+class Collection(CompoundMixin, Thing):
     '''
     A group of things.
     '''
     pass
 
-class Group(CollectableMixin, Person):
+
+class Group(CompoundMixin, Person):
     '''
     A group of people.
     '''
