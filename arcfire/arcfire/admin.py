@@ -1,38 +1,64 @@
 from django.contrib import admin
-# from .models import Picture, Plan, Location, Keyword, Property, Event, Thing, Person, Place, Collection, Group
-# from .models import Person, Property, Picture, Place, Event, Keyword
+from .models import Event, Keyword, Location, Person, Picture, Plan, Place, Property, Collection, Group
 
-# @admin.register(Event)
-# class EventAdmin(admin.ModelAdmin):
-#     fields = ('name', 'keywords', 'properties', 'locations', 'pictures', 'plans', 'description', 'slug')
-#     prepopulated_fields = {'slug': ('name',)}
+class CommonAdmin(admin.ModelAdmin):
+    fields = ('name', 'slug')
+    list_display = ('name', 'slug')
+    list_editable = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
 
-# @admin.register(Keyword)
-# class EventAdmin(admin.ModelAdmin):
-#     fields = ('name','subkeywords', 'slug')
-#     prepopulated_fields = {'slug': ('name',)}
 
-# @admin.register(Person)
-# class PersonAdmin(admin.ModelAdmin):
-#     fields = ('name', 'keywords', 'name_secondary', 'properties', 'height', 'mass', 'pictures', 'description', 'slug')
-#     list_display = ('__str__', 'gender')
-#     prepopulated_fields = {'slug': ('name', 'name_secondary')}
+@admin.register(Keyword)
+class KeywordAdmin(CommonAdmin):
+    pass
 
-# @admin.register(Picture)
-# class PictureAdmin(admin.ModelAdmin):
-#     fields = ('name', 'keywords', 'image', 'aspect', 'width', 'height', 'description', 'slug')
-#     list_display = ('__str__', 'aspect')
-#     prepopulated_fields = {'slug': ('aspect', 'name')}
 
-# @admin.register(Place)
-# class PlaceAdmin(admin.ModelAdmin):
-#     fields = ('name', 'keywords', 'longitude', 'latitude', 'altitude', 'time', 'kind', 'position', 'sublocations', 'ki', 'description', 'slug')
-#     list_display = ('name', 'longitude', 'latitude', 'altitude', 'time')
-#     prepopulated_fields = {'slug': ('name',)}
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
+    fields = ('time', 'latitude', 'longitude', 'altitude', 'position')
+    list_display = ('__str__', 'time', 'latitude', 'longitude', 'altitude', 'position')
+    list_editable = ('time', 'latitude', 'longitude', 'altitude', 'position')
 
-# @admin.register(Property)
-# class PropertyAdmin(admin.ModelAdmin):
-#     fields = ('name', 'keywords', 'description', 'slug')
-#     list_display = ('__str__', 'slug')
-#     prepopulated_fields = {'slug': ('name',)}
 
+@admin.register(Property)
+class PropertyAdmin(CommonAdmin):
+    pass
+
+
+@admin.register(Picture)
+class PictureAdmin(CommonAdmin):
+    fields = ('name', 'image', 'width', 'height', 'aspect', 'slug')
+    list_display = ('name', 'aspect', 'slug')
+    prepopulated_fields = {'slug': ('aspect', 'name')}
+
+
+@admin.register(Plan)
+class PlanAdmin(CommonAdmin):
+    fields = ('name', 'file', 'aspect', 'slug')
+    list_display = ('name', 'aspect', 'slug')
+    prepopulated_fields = {'slug': ('aspect', 'name')}
+
+
+@admin.register(Event)
+class EventAdmin(CommonAdmin):
+    pass
+
+
+@admin.register(Place)
+class PlaceAdmin(CommonAdmin):
+    fields = ('name', 'location', 'slug')
+
+
+@admin.register(Person)
+class PersonAdmin(CommonAdmin):
+    fields = ('name', 'name_secondary', 'slug')
+    list_display = ('name', 'gender', 'slug')
+    prepopulated_fields = {'slug': ('name', 'name_secondary')}
+
+
+# # # # #
+# TODO  #
+# # # # #
+
+# Collection
+# Group

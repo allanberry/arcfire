@@ -1,35 +1,36 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
+from datetime import datetime
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Level 0: base abstract and infrastructure classes #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-class Common(models.Model):
+
+class Base(models.Model):
     '''
-    Abstract base class for elements, for bootstrapping.  Basically the most generic metadata, used throughout.
+    Abstract base class for elements, for bootstrapping.
+    Basically the most generic metadata, used throughout.
+    '''
+    class Meta:
+        abstract = True
+    
+    created_at = models.DateTimeField(
+        editable=False, blank=False, null=True, auto_now_add=True)
+    updated_at = models.DateTimeField(
+        blank=False, null=True, auto_now=True)
+
+
+class Common(Base):
+    '''
+    Slightly richer version of Base class, with descriptive elements.
     '''
     class Meta:
         abstract = True
 
     name = models.CharField(max_length=255, blank=True)
     slug = models.SlugField(unique=True, blank=False)
-    
-    created_at = models.DateTimeField(
-        editable=False, blank=False, null=True)
-    updated_at = models.DateTimeField(
-        blank=False, null=True)
-
-    def save(self, *args, **kwargs):
-        '''
-        On save, update timestamps
-        as per http://stackoverflow.com/a/1737078/652626
-        '''
-        if not self.id:
-            self.created = timezone.now()
-        self.modified = timezone.now()
-        return super(Common, self).save(*args, **kwargs)
 
     def __str__(self):
         return '{}'.format(self.name)
@@ -43,8 +44,8 @@ class LifeMixin(models.Model):
         abstract = True
 
     GENDERS = (
-        ('female', 'Female'),
-        ('male', 'Male'),
+        ('f', 'Female'),
+        ('m', 'Male'),
         ('none', 'None'),
         ('other', 'Other'),
     )
@@ -105,7 +106,7 @@ class AspectMixin(models.Model):
 # Utility tables  #
 # # # # # # # # # #
 
-class Relation(Common):
+class Relation(Base):
     '''
     Relationships between elements.
     '''
@@ -139,35 +140,45 @@ class Relation(Common):
         return '{} {} {}'.format(source, predicate, target)
 
 
-class Location(Common):
+class Location(Base):
     '''
     A set of geographic and temporal coordinates for an item.
     '''
+
+    # TODO: set unique for geographic location, and/or time
 
     POSITIONS = (
         ('absolute', 'Absolute'),
         ('relative', 'Relative')
     )
-    position = models.CharField(max_length=10, choices=POSITIONS, blank=False, default='relative', help_text='"Absolute" positions establish a new reference point for sublocations: they are always relative to the ABSOLUTE_LOCATION in settings.  "Relative" positions are relative to their nearest "Absolute" parent, otherwise they are also relative to ABSOLUTE_LOCATION.  See: wiki/position') # TODO: set REFERENCE_LOCATION
-    time = models.DateTimeField(blank=True, null=True) # TODO: set default to D.time
+    position = models.CharField(max_length=10, choices=POSITIONS, blank=False, default='relative', help_text='When in doubt, leaves as "Relative".  "Absolute" positions establish a new reference point for sublocations: they are always relative to the ABSOLUTE_LOCATION in settings.  "Relative" positions are relative to their nearest "Absolute" parent, otherwise they are also relative to ABSOLUTE_LOCATION.  See: wiki/position') # TODO: set REFERENCE_LOCATION
+
+    default_time = datetime.strptime('Jan 1 7000  12:00AM', '%b %d %Y %I:%M%p')
+        # TODO: update docs and wiki: not 50000 years hence, but only 5000
+
+    time = models.DateTimeField(blank=False, null=False, default=default_time,
+        help_text="Time begins anew in the year 7000.")
+        # TODO: set default to D.time
     longitude = models.DecimalField(max_digits=9, decimal_places=6,
-        blank=True, null=True,
+        blank=False, null=False, default=90,
         help_text="In decimal.")
     latitude = models.DecimalField(max_digits=9, decimal_places=6,
-        blank=True, null=True,
-        help_text="In meters.")
+        blank=False, null=False, default=0,
+        help_text="In decimal.")
     altitude = models.DecimalField(max_digits=9, decimal_places=3,
-        blank=True, null=True,
-        help_text="In meters.")
+        blank=False, null=False, default=0,
+        help_text="In meters above sea level.")
     # approximate = TODO
 
     sublocations = models.ManyToManyField("self", blank=True, help_text="The main location indicates the reference point (e.g. the center); if sublocations are relative, they are  to this point.")
 
     def __str__(self):
-        if self.name:
-            return self.name
+        if self.position == 'absolute':
+            pos = 'a'
         else:
-            return '{} @ time:{} long:{} lat:{} alt:{}'.format(position, time, longitude, latitude, altitude)
+            pos = 'r'
+
+        return '{} long:{} lat:{} alt:{} @ time:{} '.format(pos, self.time, self.longitude, self.latitude, self.altitude)
 
 class Keyword(Common):
     '''
@@ -266,8 +277,11 @@ class Place(Item):
     '''
     Basic Place.
     '''
-    pass
+    location = models.ForeignKey(Location, related_name="places_primary",
+        blank=True, null=True)
 
+    # TODO make self.location one of self.locations,
+    # and self.locations a superset of self.location
 
 # # # # # # # # # # # # # #
 # Level 2: Complex Items  #
