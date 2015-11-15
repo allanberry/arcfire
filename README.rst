@@ -73,6 +73,8 @@ TODO.  Note, a settings stub exists in the ``core/dev/settings.py`` file.  Alter
 
 ``coverage run manage.py test whatever -v 2``
 
+``./manage.py test arcfire.tests --settings=core.settings.test``
+
 
 Starting the server (production)
 --------------------
