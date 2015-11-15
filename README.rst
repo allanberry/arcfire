@@ -71,6 +71,8 @@ Running the test suite (test)
 
 TODO.  Note, a settings stub exists in the ``core/dev/settings.py`` file.  Alter or remove as necessary; not sure yet where this lives ala Postgres.
 
+``coverage run manage.py test whatever -v 2``
+
 
 Starting the server (production)
 --------------------

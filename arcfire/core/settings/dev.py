@@ -45,7 +45,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT =  PROJ_DIR.child('static')
 
 MEDIA_URL  = '/media/'
-MEDIA_ROOT =  '/Users/aljabear/Projects/arcfire_proj/media'
+MEDIA_ROOT  =  PROJ_DIR.child('media')
 
 MEDIA_URL  = 'http://localhost:1917/media/'
 UPLOAD_ROOT = MEDIA_ROOT + 'uploads/'

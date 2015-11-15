@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'gunicorn',
     'rest_framework',
+    'coverage',
     'arcfire',
 ]
 

@@ -6,6 +6,9 @@ import inflection
 
 
 class HomeView(TemplateView):
+    '''
+    The main home page.
+    '''
     template_name = "arcfire/home.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -26,6 +29,9 @@ class HomeView(TemplateView):
 # # # # # # # # # # # # # #
 
 class ModelListView(ListView):
+    '''
+    Abstract class for providing functionality to further model views.
+    '''
     template_name = "arcfire/model_list.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -47,43 +53,73 @@ class ModelListView(ListView):
 
 
 class PlaceListView(ModelListView):
+    '''
+    Places presented on a map.
+    '''
     template_name = "arcfire/place_list.html"
     model = Place
 
 
 class PictureListView(ModelListView):
+    '''
+    Pictures presented in a gallery.
+    '''
     model = Picture
 
 
 class PlanListView(ModelListView):
+    '''
+    Plans presented in a gallery/list.
+    '''
     model = Plan
 
 
 class KeywordListView(ModelListView):
+    '''
+    Keywords presented possibly in a tag cloud.
+    '''
     model = Keyword
 
 
 class PropertyListView(ModelListView):
+    '''
+    Properties presented by organization into a hierarchy. 
+    '''
     model = Property
 
 
 class ItemListView(ModelListView):
+    '''
+    Items presented in dictionary form.
+    '''
     model = Item
 
 
 class EventListView(ModelListView):
+    '''
+    Events presented in a timeline.
+    '''
     model = Event
 
 
 class PersonListView(ModelListView):
+    '''
+    People/Characters presented in a network graph.
+    '''
     model = Person
 
 
 class LocationListView(ModelListView):
+    '''
+    Locations presented on a map; see PlaceListView
+    '''
     model = Location
 
 
 class RelationListView(ModelListView):
+    '''
+    Relations presented... in a list?  In a series of chord graphs?
+    '''
     model = Relation
 
 
@@ -96,6 +132,9 @@ class RelationListView(ModelListView):
 # # # # # # # # # # # # # #
 
 class ModelView(DetailView):
+    '''
+    Abstract base class for individual model pages, below.
+    '''
     template_name = "arcfire/model.html"
     parent_view = HomeView
 
@@ -119,46 +158,73 @@ class ModelView(DetailView):
 
 
 class EventView(ModelView):
+    '''
+    A single Event.
+    '''
     model = Event
     parent_view = EventListView
 
 
 class KeywordView(ModelView):
+    '''
+    A single Keyword.
+    '''
     model = Keyword
     parent_view = KeywordListView
 
 
 class PersonView(ModelView):
+    '''
+    A single Person.
+    '''
     model = Person
     parent_view = PersonListView
 
 
 class PictureView(ModelView):
+    '''
+    A single Picture.
+    '''
     model = Picture
     parent_view = PictureListView
 
 
 class PlanView(ModelView):
+    '''
+    A single Plan.
+    '''
     model = Plan
     parent_view = PlanListView
 
 
 class PlaceView(ModelView):
+    '''
+    A single Place.
+    '''
     model = Place
     parent_view = PlaceListView
 
 
 class PropertyView(ModelView):
+    '''
+    A single Property.
+    '''
     model = Property
     parent_view = PropertyListView
 
 
 class LocationView(ModelView):
+    '''
+    A single Location.
+    '''
     model = Location
     parent_view = LocationListView
 
 
 class RelationView(ModelView):
+    '''
+    A single Relation.
+    '''
     model = Relation
     parent_view = RelationListView
 
