@@ -9,7 +9,6 @@ PROJ_DIR = BASE_DIR.parent
 
 # overridden in templates
 DEBUG = False
-TEMPLATE_DEBUG = False
 
 STATICFILES_DIRS = (BASE_DIR.child('arcfire').child('static'),)
 

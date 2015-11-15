@@ -3,7 +3,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from arcfire.models import (Picture, Plan, Keyword, Property, Item,
     Event, Person, Place, Collection, Group,
-    #Location, 
+    Location, Relation
     )
 
 
@@ -17,6 +17,10 @@ class HomePageView(TemplateView):
         })
         return context
 
+
+# # # # # # # # # # # # # #
+# Individual Model Views  #
+# # # # # # # # # # # # # #
 
 class ModelListView(ListView):
     template_name = "arcfire/model_list.html"
@@ -43,10 +47,6 @@ class PictureListView(ModelListView):
     model = Picture
 
 
-# class LocationListView(ModelListView):
-#     model = Location
-
-
 class PlanListView(ModelListView):
     model = Plan
 
@@ -71,9 +71,69 @@ class PersonListView(ModelListView):
     model = Person
 
 
-class CollectionListView(ModelListView):
-    model = Collection
+class LocationListView(ModelListView):
+    model = Location
 
 
-class GroupListView(ModelListView):
-    model = Group
+class RelationListView(ModelListView):
+    model = Relation
+
+
+# class CollectionListView(ModelListView):
+#     model = Collection
+
+
+# class GroupListView(ModelListView):
+#     model = Group
+
+
+# # # # # # # # # # # # # #
+# Individual Model Views  #
+# # # # # # # # # # # # # #
+
+class ModelView(DetailView):
+    template_name = "arcfire/model.html"
+
+
+class EventView(ModelView):
+    model = Event
+
+
+class KeywordView(ModelView):
+    model = Keyword
+
+
+class PersonView(ModelView):
+    model = Person
+
+
+class PictureView(ModelView):
+    model = Picture
+
+
+class PlanView(ModelView):
+    model = Plan
+
+
+class PlaceView(ModelView):
+    model = Place
+
+
+class PropertyView(ModelView):
+    model = Property
+
+
+class LocationView(ModelView):
+    model = Location
+
+
+class RelationView(ModelView):
+    model = Relation
+
+
+# class CollectionView(ModelView):
+#     model = Collection
+
+
+# class GroupView(ModelView):
+#     model = Group

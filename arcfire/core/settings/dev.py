@@ -14,7 +14,6 @@ ALLOWED_HOSTS = [
 ]
 
 DEBUG = True
-TEMPLATE_DEBUG = True
 
 # If debug is enabled, Compressor is turned off; # this will manually activate
 # it.  This is important to provide Django tags (like 'static') to JS files
@@ -34,6 +33,7 @@ DATABASES = {
         'USER': 'aljabear',
         'PASSWORD': secret['DATABASE_PASSWORD'],
         'HOST': '127.0.0.1',
+
         # 'PORT': '5432', #(using default)
         # 'TEST': {
         #     'NAME': 'arcfire_test'

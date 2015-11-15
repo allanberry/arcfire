@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.urlresolvers import reverse
 from datetime import datetime
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -34,6 +35,9 @@ class Common(Base):
 
     def __str__(self):
         return '{}'.format(self.name)
+
+    def get_absolute_url(self):
+        return reverse(str(self.__class__.__name__).lower(), args=(self.slug, ))
 
 
 class LifeMixin(models.Model):
@@ -131,13 +135,17 @@ class Relation(Base):
     )
     source = models.ForeignKey("self", related_name="sources",
         blank=False, null=True)
-    target = models.ForeignKey("self", related_name="targets",
-        blank=False, null=True)
     predicate = models.CharField(
         blank=False, max_length=10, choices=PREDICATES, default='related')
+    target = models.ForeignKey("self", related_name="targets",
+        blank=False, null=True)
 
     def __str__(self):
         return '{} {} {}'.format(source, predicate, target)
+
+    def get_absolute_url(self):
+        return reverse('relation',
+            args=(self.source, self.predicate, self.target))
 
 
 class Location(Base):
@@ -156,9 +164,6 @@ class Location(Base):
     default_time = datetime.strptime('Jan 1 7000  12:00AM', '%b %d %Y %I:%M%p')
         # TODO: update docs and wiki: not 50000 years hence, but only 5000
 
-    time = models.DateTimeField(blank=False, null=False, default=default_time,
-        help_text="Time begins anew in the year 7000.")
-        # TODO: set default to D.time
     longitude = models.DecimalField(max_digits=9, decimal_places=6,
         blank=False, null=False, default=90,
         help_text="In decimal.")
@@ -168,6 +173,9 @@ class Location(Base):
     altitude = models.DecimalField(max_digits=9, decimal_places=3,
         blank=False, null=False, default=0,
         help_text="In meters above sea level.")
+    time = models.DateTimeField(blank=False, null=False, default=default_time,
+        help_text="Time begins anew in the year 7000.")
+        # TODO: set default to D.time
     # approximate = TODO
 
     sublocations = models.ManyToManyField("self", blank=True, help_text="The main location indicates the reference point (e.g. the center); if sublocations are relative, they are  to this point.")
@@ -179,6 +187,10 @@ class Location(Base):
             pos = 'r'
 
         return '{} long:{} lat:{} alt:{} @ time:{} '.format(pos, self.time, self.longitude, self.latitude, self.altitude)
+
+    def get_absolute_url(self):
+        return reverse('location',
+            args=(self.longitude, self.latitude, self.altitude, self.time ))
 
 class Keyword(Common):
     '''
@@ -217,6 +229,8 @@ class Plan(AspectMixin, Common):
     '''
     file = models.FileField(blank=False, null=True)
 
+    def get_absolute_url(self):
+        return reverse('plan', args=(self.slug, ))
 
 
 # # # # # # # # # # # # #
@@ -326,14 +340,12 @@ class Collection(CompoundMixin, Thing):
     '''
     A group of things.
     '''
-    pass
 
 
 class Group(CompoundMixin, Person):
     '''
     A group of people.
     '''
-    pass
 
 
 # class Memory(Thing):
@@ -341,6 +353,9 @@ class Group(CompoundMixin, Person):
 #     Something a living thing takes with them.
 #     '''
 #     life = models.ForeignKey(Life, related_name="memories")
+#
+#     def get_absolute_url(self):
+#         return reverse('memory', args=(self.slug, ))
 
 
 # class Plant(Life):
@@ -348,6 +363,9 @@ class Group(CompoundMixin, Person):
 #     A plant (flora).
 #     '''
 #     pass
+#
+#     def get_absolute_url(self):
+#         return reverse('memory', args=(self.slug, ))
 
 
 # class Animal(Life):
@@ -355,12 +373,17 @@ class Group(CompoundMixin, Person):
 #     An animal (fauna).
 #     '''
 #     pass
-
-
 #
+#     def get_absolute_url(self):
+#         return reverse('animal', args=(self.slug, ))
+
+
 # class Group(Collectable, Person):
 #     '''
 #     An organization, class, tribe or family of human beings.
 #     '''
 #     # cls = Person
 #     members = models.ManyToManyField(Person, related_name="groups")
+#
+#     def get_absolute_url(self):
+#         return reverse('group', args=(self.slug, ))

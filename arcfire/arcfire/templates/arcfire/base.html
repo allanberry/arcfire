@@ -18,6 +18,7 @@
 
     {% block css %}
         {% compress css %}
+        <link rel="stylesheet" type="text/css" href="{% static 'arcfire/bower_components/normalize-css/normalize.css' %}" />
         <link rel="stylesheet" type="text/scss" href="{% static 'arcfire/css/base.scss' %}" />
         {% endcompress %}
 
