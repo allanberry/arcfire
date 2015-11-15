@@ -1,15 +1,11 @@
 from django.conf.urls import url, include
 from django.contrib import admin
-from arcfire.views import HomePageView
 
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
-from arcfire.views import EventListView, KeywordListView, PersonListView, PictureListView, PlanListView, PlaceListView, PropertyListView, RelationListView, LocationListView
-#, CollectionListView, GroupListView, 
-
-from arcfire.views import EventView, KeywordView, PersonView, PictureView, PlanView, PlaceView, PropertyView, RelationView, LocationView
-#, CollectionView, GroupView, 
+from arcfire.views import HomeView, EventListView, KeywordListView, PersonListView, PictureListView, PlanListView, PlaceListView, PropertyListView, RelationListView, LocationListView, EventView, KeywordView, PersonView, PictureView, PlanView, PlaceView, PropertyView, RelationView, LocationView
+#, CollectionView, GroupView,  CollectionListView, GroupListView, 
 
 
 
@@ -38,7 +34,7 @@ router.register(r'users', UserViewSet)
 # # # # #
 
 urlpatterns = [
-    url(r'^$', HomePageView.as_view(), name='home'),
+    url(r'^$', HomeView.as_view(), name='home'),
     url(r'^admin/', admin.site.urls),
 
     

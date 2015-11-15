@@ -1,16 +1,8 @@
 {% extends 'arcfire/base.html' %}
 
 {% block figure %}
-<h1 id="page_title">{{ model_name_plural | title }}</h1>
+<h1 id="page_title">{{ page_title }}</h1>
 
-{% if object_list %}
-<ul>
-{% for obj in object_list %}
-  <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
-{% endfor %}
-</ul>
-{% else %}
-<p>No {{ model_name_plural }} found.</p>
-{% endif %}
+{% include 'arcfire/partials/object_list.html' %}
 
 {% endblock figure %}

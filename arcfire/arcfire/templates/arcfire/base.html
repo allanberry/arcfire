@@ -49,9 +49,18 @@
         <div></div>
         <div id="nav_container">
             <h3>Navigation</h3>
+            
+            <h4>Breadcrumb</h4>
             <ul>
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <p class="lead">asdfasdfsdf</p>
+                {% for p in parent_pages %}
+                <li><a href="{% url p.0 %}">{{ p.1 }}</a></li>
+                {% endfor %}
+                <li>{{ page_title }}</li>
+            </ul>
+
+            <h4>Absolute</h4>
+            <ul>
+                
                 {% for m in nav_models %}
                 <li><a href="{% url m.url_name %}">{{ m.name_plural | title }}</a></li>
                 {% endfor %}

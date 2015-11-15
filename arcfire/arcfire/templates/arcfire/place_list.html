@@ -8,22 +8,6 @@
 {% endblock js %}
 
 
-{% block figure %}
-<h1 id="page_title">Places</h1>
-
-{% if object_list %}
-<ul>
-{% for obj in object_list %}
-  <li>{{ obj }}</li>
-{% endfor %}
-</ul>
-{% else %}
-<p>No {{ model_name_plural }} found.</p>
-{% endif %}
-
-{% endblock figure %}
-
-
 {% block ground %}
 <div id="map" />
 <script>
