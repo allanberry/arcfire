@@ -1,4 +1,5 @@
 import os
+import json
 from unipath import Path
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 
@@ -7,7 +8,13 @@ BASE_DIR =  Path(__file__).ancestor(3)
 # arcfire_proj
 PROJ_DIR = BASE_DIR.parent
 
-# overridden in templates
+
+# Get config credentials from external source,
+# outside of Git root for security.
+secret = json.loads(Path(PROJ_DIR.parent, "arcfire_config.json").read_file())
+
+SECRET_KEY = secret['SECRET_KEY']
+
 DEBUG = False
 
 STATICFILES_DIRS = (BASE_DIR.child('arcfire').child('static'),)

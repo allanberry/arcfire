@@ -15,7 +15,7 @@ WORKON_HOME=/home/allanberry/webapps/arcfire/env/py35/
 ADDRESS='127.0.0.1'
 
 # The port of your Django app. This will be located within the control panel in the applications details. 
-SERVER_PORT='12345'
+SERVER_PORT='32406'
 
 # Set PYTHON to '/usr/local/bin/python2.X' for a regular deployment and the path of the binary in the virtualenv if you are using one.
 PYTHON="/home/allanberry/webapps/arcfire/env/py35/bin/python3.5"

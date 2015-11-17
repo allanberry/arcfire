@@ -1,11 +1,5 @@
 from .base import *
-import json
 
-# Get config credentials from external source,
-# outside of Git root for security.
-secret = json.loads(Path(PROJ_DIR.parent, "arcfire_config.json").read_file())
-
-SECRET_KEY = secret['SECRET_KEY']
 
 ALLOWED_HOSTS = [
     'localhost',
