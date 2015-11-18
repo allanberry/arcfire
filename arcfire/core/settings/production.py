@@ -2,6 +2,8 @@ from .base import *
 
 
 ALLOWED_HOSTS = [
+    'allanberry.com',
+    'arcfire.allanberry.com',
     '127.0.0.1',
 ]
 
