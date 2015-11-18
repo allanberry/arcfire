@@ -14,9 +14,9 @@ DATABASES = {
         'HOST': '127.0.0.1',
 
         # 'PORT': '5432', #(using default)
-        # 'TEST': {
-        #     'NAME': 'arcfire_test'
-        # }
+        'TEST': {
+            'NAME': 'arcfire_test'
+        }
     }
 }
 
