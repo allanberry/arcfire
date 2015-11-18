@@ -20,13 +20,11 @@ DATABASES = {
     }
 }
 
-STATIC_URL = '/static/'
+STATIC_URL  = 'http://static.arcfire.allanberry.com/'
 STATIC_ROOT =  PROJ_DIR.parent.parent.child('arcfire_static')
 
-MEDIA_URL  = '/media/'
-MEDIA_ROOT  =  STATIC_ROOT.child('media')
-
-MEDIA_URL  = '/media/'
+MEDIA_URL   = 'http://static.arcfire.allanberry.com/media/'
+MEDIA_ROOT  = STATIC_ROOT.child('media')
 UPLOAD_ROOT = MEDIA_ROOT.child('uploads')
 
 #email
