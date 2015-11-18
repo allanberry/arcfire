@@ -37,8 +37,10 @@ I'm planning to build the bulk of this with Python, Django, PostgreSQL, and HTML
 
 
 Versions
----
+--------
+
 (Canonical source is in requirements.txt)
+
 * Host: webfaction
 * Python 3.5.
 * Django 1.9.
@@ -50,6 +52,7 @@ Hosting Setup
 -------------
 
 TODO.  Explain/depict:
+
 * The WebFaction directory structure
 * How Git is used to transfer files, and the various steps required to move files around
 * Setting up Python and Pip, with requirements files
@@ -95,11 +98,13 @@ Finally, apply the existing migrations to the database, and you should be ready 
 Starting the server
 -------------------
 
-### In development
+In development
+~~~~~~~~~~~~~~
 
 ``./manage.py runserver --settings=core.settings.dev``
 
-### In production (only on WebFaction)
+In production (only on WebFaction)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``../arcfire_admin.sh start``
 
