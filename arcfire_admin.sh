@@ -8,7 +8,7 @@
 # See http://gunicorn.org/ for instructions on gunicorn_django's use and installtion.
 
 # Activate virtual environment. These 2 lines may be disabled/deleted if you do not use virtualenv.
-WORKON_HOME=/home/allanberry/webapps/arcfire/env/py35/
+WORKON_HOME="/home/allanberry/webapps/arcfire/env/py35/"
 . $WORKON_HOME/bin/activate
 
 # The servers IP adderess, this should be 127.0.0.1. 
