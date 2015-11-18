@@ -21,13 +21,13 @@ DATABASES = {
 }
 
 STATIC_URL = '/static/'
-STATIC_ROOT =  PROJ_DIR.child('static') # TODO
+STATIC_ROOT =  PROJ_DIR.parent.parent.child('arcfire_static')
 
 MEDIA_URL  = '/media/'
-MEDIA_ROOT  =  PROJ_DIR.child('media') # TODO
+MEDIA_ROOT  =  STATIC_ROOT.child('media')
 
-MEDIA_URL  = 'http://localhost:8001/media/' # TODO
-UPLOAD_ROOT = MEDIA_ROOT + 'uploads/'
+MEDIA_URL  = '/media/'
+UPLOAD_ROOT = MEDIA_ROOT.child('uploads')
 
 #email
 # EMAIL_HOST          = 'localhost'
