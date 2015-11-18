@@ -11,10 +11,10 @@
 WORKON_HOME="/home/allanberry/webapps/arcfire/env/py35/"
 . $WORKON_HOME/bin/activate
 
-# The servers IP adderess, this should be 127.0.0.1. 
+# The server's IP adderess, this should be 127.0.0.1. 
 ADDRESS='127.0.0.1'
 
-# The port of your Django app. This will be located within the control panel in the applications details. 
+# The port of your Django app. This will be located within the control panel in the application's details. 
 SERVER_PORT='32406'
 
 # Set PYTHON to '/usr/local/bin/python2.X' for a regular deployment and the path of the binary in the virtualenv if you are using one.
