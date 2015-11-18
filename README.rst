@@ -36,10 +36,21 @@ Technical stack
 I'm planning to build the bulk of this with Python, Django, PostgreSQL, and HTML5.  Ultimately, when the API is settled, I may do something different on the front end: consume a Python-generated JSON API with a JS framework, for example.  I'd like to stay with Python for as long as possible, though, to benefit from its classical structure.
 
 
+Versions
+---
+(Canonical source is in requirements.txt)
+* Python 3.5
+* Django 1.9.
+* Dev: is Mac OSX 10.11.
+* Production: CentOS 6.7.
+
+
 Database
 --------
 
-This software uses the open-source PostgreSQL database.  After installing Postgres, of course, you can start the database with this command:
+This software uses the open-source PostgreSQL database.  Make sure you install the PostGIS extension (available as a checkbox add-on with Webfaction).
+
+After installing Postgres, of course, you can start the database with this command:
 
 * ``postgres -D /usr/local/var/postgres``
 
