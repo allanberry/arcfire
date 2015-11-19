@@ -20,8 +20,6 @@ DATABASES = {
     }
 }
 
-COMPRESS_ENABLED = True
-
 STATIC_URL  = 'http://static.arcfire.allanberry.com/'
 STATIC_ROOT =  PROJ_DIR.parent.parent.child('arcfire_static')
 

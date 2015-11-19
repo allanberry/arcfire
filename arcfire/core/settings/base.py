@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'gunicorn',
     'rest_framework',
     'coverage',
+    'haystack',
     'arcfire',
 ]
 
