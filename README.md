@@ -1,5 +1,4 @@
-New Project: Arcfire
-====================
+# New Project: Arcfire
 
 Just getting started.
 
@@ -10,16 +9,15 @@ My working scenario, in order to test the software, is the Arctic ocean, sometim
 I look forward to hammering out further details.  Stay tuned!
 
 
-About the title
----------------
+### About the title
+
 
 *Arcfire* doesn't mean much, really; It's a mashup between the Arctic, the setting of the potential tale, and the presumed heat of a postapocalyptic climate.  I chose it quickly because I needed a working title, it's easy to type, and I didn't want to spend much time on it.  
 
 So don't take the title too seriously.  I plan to change it sometime in the future when I get a better idea.
 
 
-Eventual deliverables
----------------------
+### Eventual deliverables
 
 * A comprehensive API.
 * An HTML site with many entry points.
@@ -27,17 +25,13 @@ Eventual deliverables
 * Lots of appendices, lateral narratives, maps, and other graphics.  Info-vis, man!
 
 
-Getting Started
-===============
+### Technical stack
 
-Technical stack
----------------
 
 I'm planning to build the bulk of this with Python, Django, PostgreSQL, and HTML5.  Ultimately, when the API is settled, I may do something different on the front end: consume a Python-generated JSON API with a JS framework, for example.  I'd like to stay with Python for as long as possible, though, to benefit from its classical structure.
 
 
-Versions
---------
+### Versions
 
 (Canonical source is in requirements.txt)
 
@@ -48,8 +42,7 @@ Versions
 * Production: CentOS 6.7.
 
 
-Hosting Setup
--------------
+### Hosting Setup
 
 TODO.  Explain/depict:
 
@@ -59,8 +52,7 @@ TODO.  Explain/depict:
 * Other WebFaction tips, methods, and gotchas.
 
 
-Database
---------
+### Database
 
 This software uses the open-source PostgreSQL database.  Make sure you install the [PostGIS](http://postgis.net/install/) extension (available as a checkbox add-on with Webfaction).
 
@@ -69,8 +61,7 @@ After installing Postgres, of course, you can start the database with this comma
 * ``postgres -D /usr/local/var/postgres``
 
 
-Building the project
---------------------
+### Building the project
 
 In addition to building the docs above, once some fixtures are in place and there's a regular need to rebuild the database, I will provide an Invoke script for this purpose.
 
@@ -80,51 +71,47 @@ The following examples are for the production environment, but should work in de
 
 You need to provide a superuser...
 
-``./manage.py createsuperuser --settings=core.settings.production``
+* ``./manage.py createsuperuser --settings=core.settings.production``
 
 ...or to load the initial_data fixture:
 
-``./manage.py loaddata arcfire/fixtures/initial_data.json --settings=core.settings.production``
+* ``./manage.py loaddata arcfire/fixtures/initial_data.json --settings=core.settings.production``
 
 Collect the static files:
 
-``./manage.py collectstatic --settings=core.settings.production``
+* ``./manage.py collectstatic --settings=core.settings.production``
 
 Finally, apply the existing migrations to the database, and you should be ready to rock and roll.
 
-``./manage.py migrate --settings=core.settings.production``
+* ``./manage.py migrate --settings=core.settings.production``
 
 
-Starting the server
--------------------
+### Starting the server
 
-In development
-~~~~~~~~~~~~~~
+#### In development
 
-``./manage.py runserver --settings=core.settings.dev``
 
-In production (only on WebFaction)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* ``./manage.py runserver --settings=core.settings.dev``
 
-``../arcfire_admin.sh start``
+#### In production (only on WebFaction)
+
+* ``../arcfire_admin.sh start``
 
 (or ``../arcfire_admin.sh restart``/``../arcfire_admin.sh stop``, depending.)
 
 The ``arcfire_admin.sh`` script gets Gunicorn running, and connects the software to the WebFaction port.  Other hosts will require a different solution.
 
 
-Running the test suite
---------------------------
+### Running the test suite
 
 This should work (only on development; I don't know how to run tests in production/staging):
 
-``./manage.py test arcfire.tests --settings=core.settings.test``
+* ``./manage.py test arcfire.tests --settings=core.settings.test``
 
 TODO: adapt for Coverage.
 
 
-Docs
-----
+### Docs
 
 I just created some Sphinx docs for the first time.  I will expand as I learn more about this project, and as I write code.
 
