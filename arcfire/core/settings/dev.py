@@ -51,3 +51,6 @@ EMAIL_PORT          = 1025
 #EMAIL_HOST_PASSWORD = '<password>'
 #DEFAULT_FROM_EMAIL  = '<address>'
 #SERVER_EMAIL        = '<address>'
+
+# like to set this for Arcfire; currently throws a "naive datetime" error.
+# DEFAULT_TIME = datetime.strptime('Jan 1 7000  12:00AM', '%b %d %Y %I:%M%p')

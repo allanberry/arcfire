@@ -2,6 +2,7 @@ import os
 import json
 from unipath import Path
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+import datetime
 
 # arcfire_proj/arcfire/
 BASE_DIR =  Path(__file__).ancestor(3)
@@ -35,7 +36,7 @@ INSTALLED_APPS = [
     'gunicorn',
     'rest_framework',
     'coverage',
-    'haystack',
+    # 'haystack',
     'arcfire',
 ]
 
@@ -111,13 +112,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
 
-USE_TZ = True
+# Time zone support for these stories would just add unnecessary complexity.
+# TIME_ZONE = 'UTC'
+# USE_TZ = False
 
 
 REST_FRAMEWORK = {
@@ -127,3 +127,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+DEFAULT_TIME = datetime.datetime.now()

@@ -2,7 +2,8 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.urlresolvers import reverse
-from datetime import datetime
+from django.conf import settings
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Level 0: base abstract and infrastructure classes #
@@ -123,6 +124,7 @@ class Relation(Base):
         ('attract', 'is attracted to'),
         ('cause', 'is caused by'),
         ('child', 'is child of'),
+        ('heir', 'is heir of'),
         ('control', 'is controlled by'),
         ('friend', 'is friend of'),
         ('inside', 'is inside of'),
@@ -161,9 +163,6 @@ class Location(Base):
     )
     position = models.CharField(max_length=10, choices=POSITIONS, blank=False, default='relative', help_text='When in doubt, leaves as "Relative".  "Absolute" positions establish a new reference point for sublocations: they are always relative to the ABSOLUTE_LOCATION in settings.  "Relative" positions are relative to their nearest "Absolute" parent, otherwise they are also relative to ABSOLUTE_LOCATION.  See: wiki/position') # TODO: set REFERENCE_LOCATION
 
-    default_time = datetime.strptime('Jan 1 7000  12:00AM', '%b %d %Y %I:%M%p')
-        # TODO: update docs and wiki: not 50000 years hence, but only 5000
-
     longitude = models.DecimalField(max_digits=9, decimal_places=6,
         blank=False, null=False, default=90,
         help_text="In decimal.")
@@ -173,7 +172,7 @@ class Location(Base):
     altitude = models.DecimalField(max_digits=9, decimal_places=3,
         blank=False, null=False, default=0,
         help_text="In meters above sea level.")
-    time = models.DateTimeField(blank=False, null=False, default=default_time,
+    time = models.DateTimeField(blank=False, null=False, default=timezone.now,
         help_text="Time begins anew in the year 7000.")
         # TODO: set default to D.time
     # approximate = TODO
@@ -191,6 +190,7 @@ class Location(Base):
     def get_absolute_url(self):
         return reverse('location',
             args=(self.longitude, self.latitude, self.altitude, self.time ))
+
 
 class Keyword(Common):
     '''
