@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 import factory
-from pyquery import PyQuery as pq
+from .TestUtils import TestUtils
 from arcfire.models import (
     Picture,
     Plan,
@@ -17,7 +17,7 @@ from arcfire.models import (
 )
 
 
-class ModelTestCase(TestCase):
+class ModelTestCase(TestUtils):
     '''
     This is mostly a test of the tests at the moment.
     TODO: expand to test other models.
@@ -34,13 +34,8 @@ class ModelTestCase(TestCase):
         self.assertEqual(events.count(), 2)
 
 
-class TemplateTestCase(TestCase):
-    ''''''
-    def setUp(self):
-        pass
+class TemplateTestCase(TestUtils):
 
-    def html_subset(input_string, css_selector):
-        return 'flurg'
 
     def test_get_response(self):
         c = Client()
@@ -49,5 +44,4 @@ class TemplateTestCase(TestCase):
 
         content = response.content.decode('utf-8')
 
-        d = pq(content)
-        print(type(d("#page_title")))
+        self.assert_in_html(content, '#page_title', ['Welcome to Arcfire.'], ['Flurble.'])
