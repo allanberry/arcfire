@@ -4,9 +4,14 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
-from arcfire.views import HomeView, EventListView, KeywordListView, PersonListView, PictureListView, PlanListView, PlaceListView, PropertyListView, RelationListView, LocationListView, EventView, KeywordView, PersonView, PictureView, PlanView, PlaceView, PropertyView, RelationView, LocationView
-#, CollectionView, GroupView,  CollectionListView, GroupListView, 
-
+from arcfire.views import (
+    HomeView, EventListView, KeywordListView,
+    PersonListView, PictureListView, PlanListView, PlaceListView,
+    PropertyListView, RelationListView, LocationListView, ThingListView,
+    EventView, KeywordView, PersonView, PictureView, PlanView, PlaceView,
+    PropertyView, RelationView, LocationView, ThingView
+    # CollectionView, GroupView, CollectionListView, GroupListView, 
+)
 
 
 # # # # # # #
@@ -36,9 +41,7 @@ router.register(r'users', UserViewSet)
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^admin/', admin.site.urls),
-
     
-
     # model views
     url(r'^events$', EventListView.as_view(), name='event_list'),
     url(r'^keywords$', KeywordListView.as_view(), name='keyword_list'),
@@ -49,6 +52,7 @@ urlpatterns = [
     url(r'^properties$', PropertyListView.as_view(), name='property_list'),
     url(r'^relations$', RelationListView.as_view(), name='relation_list'),
     url(r'^locations$', LocationListView.as_view(), name='location_list'),
+    url(r'^thing$', ThingListView.as_view(), name='thing_list'),
     # url(r'^groups$', GroupListView.as_view(), name='group_list'),
     # url(r'^collections$', CollectionListView.as_view(), name='collection_list'),
 
@@ -60,6 +64,7 @@ urlpatterns = [
     url(r'^places/(?P<slug>[-\w]+)$', PlaceView.as_view(), name='place'),
     url(r'^plans/(?P<slug>[-\w]+)$', PlanView.as_view(), name='plan'),
     url(r'^properties/(?P<slug>[-\w]+)$', PropertyView.as_view(), name='property'),
+    url(r'^things/(?P<slug>[-\w]+)$', ThingView.as_view(), name='thing'),
     url(r'^relations/(?P<source>[-\w]+)/(?P<predicate>[-\w]+)/(?P<target>[-\w]+)$',
         RelationView.as_view(), name='relation'),
     url(r'^locations/(?P<longitude>[-\w]+)/(?P<latitude>[-\w]+)/(?P<altitude>[-\w]+)/(?P<time>[-\w]+)$',

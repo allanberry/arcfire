@@ -1,7 +1,7 @@
 // Give this a shot without bootstrap?
 // @import '../bower_components/bootstrap-sass/assets/stylesheets/bootstrap-custom';
 
-@import 'typography';
+/* @import 'typography'; */
 
 /* basic */
 
@@ -19,7 +19,7 @@ body {
 /* GROUND  */
 /* * * * * */
 
-main {
+/*main {
     #figure {
         background-color: hsla(180, 50%, 50%, .5);
         border: 1px solid blue;
@@ -46,7 +46,7 @@ main {
             }
         }
     }
-}
+}*/
 
 nav {
     background-color: hsla(127, 50%, 50%, .5);

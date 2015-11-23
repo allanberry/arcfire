@@ -1,7 +1,7 @@
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from arcfire.models import Picture, Plan, Keyword, Property, Item, Event, Person, Place, Collection, Group, Location, Relation
+from arcfire.models import Picture, Plan, Keyword, Property, Thing, Event, Person, Place, Collection, Group, Location, Relation
 import inflection
 
 
@@ -88,11 +88,11 @@ class PropertyListView(ModelListView):
     model = Property
 
 
-class ItemListView(ModelListView):
+class ThingListView(ModelListView):
     '''
-    Items presented in dictionary form.
+    Things presented in dictionary form.
     '''
-    model = Item
+    model = Thing
 
 
 class EventListView(ModelListView):
@@ -163,6 +163,14 @@ class EventView(ModelView):
     '''
     model = Event
     parent_view = EventListView
+
+
+class ThingView(ModelView):
+    '''
+    A single Thing.
+    '''
+    model = Thing
+    parent_view = ThingListView
 
 
 class KeywordView(ModelView):

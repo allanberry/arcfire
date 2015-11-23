@@ -1,5 +1,4 @@
 {% load staticfiles %}
-{% load compress %}
 
 <!DOCTYPE html>
 <html>
@@ -17,10 +16,9 @@
     {% endblock js %}
 
     {% block css %}
-        {% compress css %}
         <link rel="stylesheet" type="text/css" href="{% static 'arcfire/bower_components/normalize-css/normalize.css' %}" />
-        <link rel="stylesheet" type="text/scss" href="{% static 'arcfire/css/base.scss' %}" />
-        {% endcompress %}
+        <link rel="stylesheet" type="text/css" href="{% static 'arcfire/css/typography.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'arcfire/css/base.css' %}" />
 
 
         <link rel='stylesheet' type='text/css'  href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700' />

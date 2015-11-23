@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-    'compressor',
+    #'compressor',
     'django_extensions',
     'gunicorn',
     'rest_framework',
@@ -57,14 +57,14 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-COMPRESS_PRECOMPILERS = (
-    ('text/scss', 'sass --scss {infile} {outfile}'),
-)
+# COMPRESS_PRECOMPILERS = (
+#     ('text/scss', 'sass --scss {infile} {outfile}'),
+# )
 
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.template.TemplateFilter',
-    'compressor.filters.jsmin.JSMinFilter',
-]
+# COMPRESS_JS_FILTERS = [
+#     'compressor.filters.template.TemplateFilter',
+#     'compressor.filters.jsmin.JSMinFilter',
+# ]
 
 ROOT_URLCONF = 'core.urls'
 

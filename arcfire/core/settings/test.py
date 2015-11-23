@@ -14,10 +14,10 @@ DEBUG = True
 # COMPRESS_ENABLED = False
 
 # However, in development, we had better override the JSMinFilter
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.template.TemplateFilter',
-    # 'compressor.filters.jsmin.JSMinFilter',
-]
+# COMPRESS_JS_FILTERS = [
+#     'compressor.filters.template.TemplateFilter',
+#     # 'compressor.filters.jsmin.JSMinFilter',
+# ]
 
 
 DATABASES = {
