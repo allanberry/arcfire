@@ -1,10 +1,21 @@
+from django.contrib.auth import (
+    REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout)
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.urlresolvers import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.utils.http import is_safe_url
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic import FormView, RedirectView
 from django.views.generic.base import TemplateView
-from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
-from django.contrib.auth import authenticate, login
+from django.views.generic.list import ListView
 from arcfire.models import Picture, Plan, Keyword, Property, Thing, Event, Person, Place, Collection, Group, Location, Relation
+
 import inflection
-import floppyforms as forms
+# import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
+# with D1.9
 
 
 class HomeView(TemplateView):
@@ -28,23 +39,68 @@ class HomeView(TemplateView):
 
 class LoginView(FormView):
     '''
-    Primary means of logging into the site, as opposed to the stock Admin.
+    Provides login with a username and password.
+    https://coderwall.com/p/sll1kw/django-auth-class-based-views-login-and-logout
     '''
+    success_url = reverse_lazy('login')
+    form_class = AuthenticationForm
+    redirect_field_name = REDIRECT_FIELD_NAME
+    template_name = "arcfire/login.html"
 
-    def post(self):
-        username = self.request.POST['username']
-        password = self.request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(self.request, user)
-                # Redirect to a success page.
-            else:
-                # Return a 'disabled account' error message
-                pass
-        else:
-            # Return an 'invalid login' error message.
-            pass
+    @method_decorator(sensitive_post_parameters('password'))
+    @method_decorator(csrf_protect)
+    @method_decorator(never_cache)
+    def dispatch(self, request, *args, **kwargs):
+        # Sets a test cookie to make sure the user has cookies enabled
+        request.session.set_test_cookie()
+
+        return super(LoginView, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        auth_login(self.request, form.get_user())
+
+        # If the test cookie worked, go ahead and
+        # delete it since its no longer needed
+        if self.request.session.test_cookie_worked():
+            self.request.session.delete_test_cookie()
+
+        return super(LoginView, self).form_valid(form)
+
+    def get_success_url(self):
+        print(self.request.POST.get(self.redirect_field_name))
+
+        redirect_to = self.request.POST.get(self.redirect_field_name)
+        if not is_safe_url(url=redirect_to, host=self.request.get_host()):
+            redirect_to = self.success_url
+        return redirect_to
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(LoginView, self).get_context_data(*args, **kwargs)
+
+        # parent pages, in ('url_name', 'page_title') format
+        # Allows multiple, ordered parents for breadcrumbs
+        parent_pages = (
+            ('home', 'Home'),
+        )
+
+        context.update({
+            'window_title': 'Authenticate',
+            'page_title': 'Authenticate',
+            'parent_pages': parent_pages
+        })
+        return context
+
+
+class LogoutView(RedirectView):
+    '''
+    Provides logout functionality.
+    '''
+    url = reverse_lazy('login')
+
+    def get(self, request, *args, **kwargs):
+        auth_logout(request)
+        return super(LogoutView, self).get(request, *args, **kwargs)
+
 
 # # # # # # # # # # # # # #
 # Individual Model Views  #

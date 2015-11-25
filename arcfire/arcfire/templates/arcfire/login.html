@@ -1,0 +1,16 @@
+{% extends 'arcfire/base.html' %}
+
+{% block figure %}
+<h1 id="page_title">Login to Arcfire.</h1>
+
+{% if user.is_authenticated %}
+<p><a href="{% url 'logout' %}">Logout</a></p>
+{% else %}
+<form action="/login/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+</form>
+{% endif %}
+
+{% endblock figure %}

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
 from arcfire.views import (
-    HomeView, EventListView, KeywordListView,
+    HomeView, LoginView, LogoutView, EventListView, KeywordListView,
     PersonListView, PictureListView, PlanListView, PlaceListView,
     PropertyListView, RelationListView, LocationListView, ThingListView,
     EventView, KeywordView, PersonView, PictureView, PlanView, PlaceView,
@@ -41,6 +41,9 @@ router.register(r'users', UserViewSet)
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^admin/', admin.site.urls),
+
+    url(r'^login/', LoginView.as_view(), name='login'),
+    url(r'^logout/', LogoutView.as_view(), name='logout'),
     
     # model views
     url(r'^events$', EventListView.as_view(), name='event_list'),

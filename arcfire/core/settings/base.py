@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'gunicorn',
     'rest_framework',
     'coverage',
-    'floppyforms',
+    # 'floppyforms',
     # 'haystack',
     'arcfire',
 ]
