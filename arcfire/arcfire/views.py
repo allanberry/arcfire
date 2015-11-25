@@ -1,8 +1,10 @@
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.contrib.auth import authenticate, login
 from arcfire.models import Picture, Plan, Keyword, Property, Thing, Event, Person, Place, Collection, Group, Location, Relation
 import inflection
+import floppyforms as forms
 
 
 class HomeView(TemplateView):
@@ -23,6 +25,26 @@ class HomeView(TemplateView):
         })
         return context
 
+
+class LoginView(FormView):
+    '''
+    Primary means of logging into the site, as opposed to the stock Admin.
+    '''
+
+    def post(self):
+        username = self.request.POST['username']
+        password = self.request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(self.request, user)
+                # Redirect to a success page.
+            else:
+                # Return a 'disabled account' error message
+                pass
+        else:
+            # Return an 'invalid login' error message.
+            pass
 
 # # # # # # # # # # # # # #
 # Individual Model Views  #
