@@ -54,11 +54,6 @@ class TemplateTestCase(TestUtils):
         Property.objects.create(name="Brown Hair", slug="brown-hair")
         Thing.objects.create(name="Curling Iron", slug="curling-iron")
 
-        self.duke = User.objects.create_user(
-            username='wellington', password='waterloo')
-        self.assertEqual(User.objects.all().count(), 1)
-
-
     def test_home(self):
         '''
         Home page should load.
@@ -116,6 +111,18 @@ class TemplateTestCase(TestUtils):
             self.assert_in_html(content, 'nav > div#nav_container > h3',
                 ['Navigation'], ['Flurble.'])
 
+
+class UserTestCase(TestUtils):
+    '''
+    Tests covering users, auth, and other account-type stuff.
+    '''
+
+    def setUp(self):
+        self.c = Client()
+        self.duke = User.objects.create_user(
+            username='wellington', password='waterloo')
+        self.assertEqual(User.objects.all().count(), 1)
+
     def test_login(self):
         '''
         User should be able to login using custom form, and should receive a
@@ -143,3 +150,17 @@ class TemplateTestCase(TestUtils):
         content = response.content.decode('utf-8')
         self.assert_in_html(content, '#messages', ['Login successful.'])
         self.assert_in_html(content, '#nav_absolute', ['Logout'], ['Login'])
+
+    def test_logout(self):
+        '''
+        User should be able to logout.
+        '''
+        # Login
+        response = self.c.post(reverse('login'),
+            {'username': 'wellington', 'password': 'waterloo'})
+        self.assertEqual(
+            int(self.c.session.get('_auth_user_id')), self.duke.pk)
+
+        # Logout
+        self.c.get(reverse('logout'))
+        self.assertEqual(self.c.session.get('_auth_user_id'), None)
