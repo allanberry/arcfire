@@ -4,14 +4,8 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
-from arcfire.views import (
-    HomeView, LoginView, LogoutView, EventListView, KeywordListView,
-    PersonListView, PictureListView, PlanListView, PlaceListView,
-    PropertyListView, RelationListView, LocationListView, ThingListView,
-    EventView, KeywordView, PersonView, PictureView, PlanView, PlaceView,
-    PropertyView, RelationView, LocationView, ThingView
-    # CollectionView, GroupView, CollectionListView, GroupListView, 
-)
+from arcfire.views import *
+from arcfire.models import *
 
 
 # # # # # # #
@@ -46,18 +40,30 @@ urlpatterns = [
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     
     # model views
-    url(r'^events$', EventListView.as_view(), name='event_list'),
-    url(r'^keywords$', KeywordListView.as_view(), name='keyword_list'),
-    url(r'^people$', PersonListView.as_view(), name='person_list'),
-    url(r'^pictures$', PictureListView.as_view(), name='picture_list'),
-    url(r'^places$', PlaceListView.as_view(), name='place_list'),
-    url(r'^plans$', PlanListView.as_view(), name='plan_list'),
-    url(r'^properties$', PropertyListView.as_view(), name='property_list'),
-    url(r'^relations$', RelationListView.as_view(), name='relation_list'),
-    url(r'^locations$', LocationListView.as_view(), name='location_list'),
-    url(r'^thing$', ThingListView.as_view(), name='thing_list'),
-    # url(r'^groups$', GroupListView.as_view(), name='group_list'),
-    # url(r'^collections$', CollectionListView.as_view(), name='collection_list'),
+    url(r'^events$', ModelListView.as_view(),
+        kwargs={'model':Event}, name='event_list'),
+    url(r'^keywords$', ModelListView.as_view(),
+        kwargs={'model':Keyword}, name='keyword_list'),
+    url(r'^locations$', ModelListView.as_view(),
+        kwargs={'model':Location}, name='location_list'),
+    url(r'^people$', ModelListView.as_view(),
+        kwargs={'model':Person}, name='person_list'),
+    url(r'^pictures$', ModelListView.as_view(),
+        kwargs={'model':Picture}, name='picture_list'),
+    url(r'^places$', ModelListView.as_view(),
+        kwargs={'model':Place}, name='place_list'),
+    url(r'^plans$', ModelListView.as_view(),
+        kwargs={'model':Plan}, name='plan_list'),
+    url(r'^properties$', ModelListView.as_view(),
+        kwargs={'model':Property}, name='property_list'),
+    url(r'^relations$', ModelListView.as_view(),
+        kwargs={'model':Relation}, name='relation_list'),
+    url(r'^thing$', ModelListView.as_view(),
+        kwargs={'model':Thing}, name='thing_list'),
+    # url(r'^groups$', ModelListView.as_view(),
+        # kwargs={'model':Group}, name='group_list'),
+    # url(r'^collections$', ModelListView.as_view(),
+        # kwargs={'model':Collection}, name='collection_list'),
 
     # model views
     url(r'^events/(?P<slug>[-\w]+)$', EventView.as_view(), name='event'),

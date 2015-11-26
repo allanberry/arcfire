@@ -117,12 +117,36 @@ class LogoutView(RedirectView):
 class ModelListView(ListView):
     '''
     Abstract class for providing functionality to further model views.
+
+    TODO: put the following somewhere else.
+    Places presented on a map.
+    Pictures presented in a gallery.
+    Plans presented in a gallery/list.
+    Keywords presented possibly in a tag cloud.
+    Properties presented by organization into a hierarchy. 
+    Things presented in dictionary form.
+    Events presented in a timeline.
+    People/Characters presented in a network graph.
+    Locations presented on a map; see PlaceListView
+    Relations presented... in a list?  In a series of chord graphs?
     '''
-    template_name = "arcfire/model_list.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        # Override dispatch to set model instance variable.
+        self.model = self.kwargs.pop('model')
+        return super(ModelListView, self).dispatch(request, *args, **kwargs)        
+
+    def get_template_names(self, *args, **kwargs):   
+        # Provide a template to use; otherwise, use default.
+        templates = [
+            'arcfire/{}_list.html'.format(self.model._meta.verbose_name),
+            'arcfire/model_list.html'] # default
+        templates.extend(
+            super(ModelListView, self).get_template_names(*args, **kwargs))
+        return templates
 
     def get_context_data(self, *args, **kwargs):
         context = super(ModelListView, self).get_context_data(*args, **kwargs)
-
         parent_pages = (
             ('home', 'Home'),
         )
@@ -138,81 +162,6 @@ class ModelListView(ListView):
         return context
 
 
-class PlaceListView(ModelListView):
-    '''
-    Places presented on a map.
-    '''
-    template_name = "arcfire/place_list.html"
-    model = Place
-
-
-class PictureListView(ModelListView):
-    '''
-    Pictures presented in a gallery.
-    '''
-    model = Picture
-
-
-class PlanListView(ModelListView):
-    '''
-    Plans presented in a gallery/list.
-    '''
-    model = Plan
-
-
-class KeywordListView(ModelListView):
-    '''
-    Keywords presented possibly in a tag cloud.
-    '''
-    model = Keyword
-
-
-class PropertyListView(ModelListView):
-    '''
-    Properties presented by organization into a hierarchy. 
-    '''
-    model = Property
-
-
-class ThingListView(ModelListView):
-    '''
-    Things presented in dictionary form.
-    '''
-    model = Thing
-
-
-class EventListView(ModelListView):
-    '''
-    Events presented in a timeline.
-    '''
-    model = Event
-
-
-class PersonListView(ModelListView):
-    '''
-    People/Characters presented in a network graph.
-    '''
-    model = Person
-
-
-class LocationListView(ModelListView):
-    '''
-    Locations presented on a map; see PlaceListView
-    '''
-    model = Location
-
-
-class RelationListView(ModelListView):
-    '''
-    Relations presented... in a list?  In a series of chord graphs?
-    '''
-    model = Relation
-
-
-# class CollectionListView(ModelListView):
-# class GroupListView(ModelListView):
-
-
 # # # # # # # # # # # # # #
 # Individual Model Views  #
 # # # # # # # # # # # # # #
@@ -222,7 +171,7 @@ class ModelView(DetailView):
     Abstract base class for individual model pages, below.
     '''
     template_name = "arcfire/model.html"
-    parent_view = HomeView
+    # parent_view = HomeView
 
     def get_context_data(self, *args, **kwargs):
         context = super(ModelView, self).get_context_data(*args, **kwargs)
@@ -231,8 +180,8 @@ class ModelView(DetailView):
         # Allows multiple, ordered parents for breadcrumbs
         parent_pages = (
             ('home', 'Home'),
-            ('{}_list'.format(self.parent_view.model._meta.verbose_name),
-                self.parent_view.model._meta.verbose_name_plural.title()),
+            # ('{}_list'.format(self.parent_view.model._meta.verbose_name),
+            #     self.parent_view.model._meta.verbose_name_plural.title()),
         )
 
         context.update({
@@ -248,7 +197,7 @@ class EventView(ModelView):
     A single Event.
     '''
     model = Event
-    parent_view = EventListView
+    # parent_view = EventListView
 
 
 class ThingView(ModelView):
@@ -256,7 +205,7 @@ class ThingView(ModelView):
     A single Thing.
     '''
     model = Thing
-    parent_view = ThingListView
+    # parent_view = ThingListView
 
 
 class KeywordView(ModelView):
@@ -264,7 +213,7 @@ class KeywordView(ModelView):
     A single Keyword.
     '''
     model = Keyword
-    parent_view = KeywordListView
+    # parent_view = KeywordListView
 
 
 class PersonView(ModelView):
@@ -272,7 +221,7 @@ class PersonView(ModelView):
     A single Person.
     '''
     model = Person
-    parent_view = PersonListView
+    # parent_view = PersonListView
 
 
 class PictureView(ModelView):
@@ -280,7 +229,7 @@ class PictureView(ModelView):
     A single Picture.
     '''
     model = Picture
-    parent_view = PictureListView
+    # parent_view = PictureListView
 
 
 class PlanView(ModelView):
@@ -288,7 +237,7 @@ class PlanView(ModelView):
     A single Plan.
     '''
     model = Plan
-    parent_view = PlanListView
+    # parent_view = PlanListView
 
 
 class PlaceView(ModelView):
@@ -296,7 +245,7 @@ class PlaceView(ModelView):
     A single Place.
     '''
     model = Place
-    parent_view = PlaceListView
+    # parent_view = PlaceListView
 
 
 class PropertyView(ModelView):
@@ -304,7 +253,7 @@ class PropertyView(ModelView):
     A single Property.
     '''
     model = Property
-    parent_view = PropertyListView
+    # parent_view = PropertyListView
 
 
 class LocationView(ModelView):
@@ -312,7 +261,7 @@ class LocationView(ModelView):
     A single Location.
     '''
     model = Location
-    parent_view = LocationListView
+    # parent_view = LocationListView
 
 
 class RelationView(ModelView):
@@ -320,7 +269,7 @@ class RelationView(ModelView):
     A single Relation.
     '''
     model = Relation
-    parent_view = RelationListView
+    # parent_view = RelationListView
 
 
 # class CollectionView(ModelView):
