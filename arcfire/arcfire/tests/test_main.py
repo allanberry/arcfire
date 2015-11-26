@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+from django.contrib.auth.models import User
 import factory
 from .TestUtils import TestUtils
 from django.core.urlresolvers import reverse
@@ -42,7 +43,8 @@ class TemplateTestCase(TestUtils):
         self.c = Client()
         # Collection.objects.create(name="Gum Wall", slug="gum-wall")
         Event.objects.create(name="War of 1812", slug="war-1812")
-        # Group.objects.create(name="Democratic Party", slug="democratic-party")
+        # Group.objects.create(
+           # name="Democratic Party", slug="democratic-party")
         Keyword.objects.create(name="Wars", slug="wars")
         Person.objects.create(name="Napoleon", slug="napoleon")
         Picture.objects.create(
@@ -52,9 +54,15 @@ class TemplateTestCase(TestUtils):
         Property.objects.create(name="Brown Hair", slug="brown-hair")
         Thing.objects.create(name="Curling Iron", slug="curling-iron")
 
+        self.duke = User.objects.create_user(
+            username='wellington', password='waterloo')
+        self.assertEqual(User.objects.all().count(), 1)
+
 
     def test_home(self):
-        '''Home page should load.'''
+        '''
+        Home page should load.
+        '''
         response_1 = self.c.get('/')
         response_2 = self.c.get(reverse('home'))
 
@@ -67,7 +75,9 @@ class TemplateTestCase(TestUtils):
             content, '#page_title', ['Welcome to Arcfire.'], ['Flurble.'])
 
     def test_urls(self):
-        '''Primary urls should load.'''
+        '''
+        Primary urls should load.
+        '''
         responses = []
         # responses.append(self.c.get(reverse('collection_list'))) # TODO 
         responses.append(self.c.get(reverse('event_list')))
@@ -81,6 +91,7 @@ class TemplateTestCase(TestUtils):
         responses.append(self.c.get(reverse('property_list')))
         responses.append(self.c.get(reverse('relation_list')))
         responses.append(self.c.get(reverse('thing_list')))
+        responses.append(self.c.get(reverse('login')))
         # responses.append(self.c.get(
         #     reverse('collection', args=['gum-wall']))) # TODO
         # responses.append(self.c.get(
@@ -95,6 +106,7 @@ class TemplateTestCase(TestUtils):
         responses.append(self.c.get(reverse('thing', args=['curling-iron'])))
         # responses.append(self.c.get(reverse('location', args=[]))) # TODO 
 
+
         for r in responses:
             # check that each url works
             self.assertEqual(r.status_code, 200)
@@ -104,4 +116,30 @@ class TemplateTestCase(TestUtils):
             self.assert_in_html(content, 'nav > div#nav_container > h3',
                 ['Navigation'], ['Flurble.'])
 
+    def test_login(self):
+        '''
+        User should be able to login using custom form, and should receive a
+        successful message.
+        '''
+        # make sure nobody's logged in
+        self.assertEqual(self.c.session.get('_auth_user_id'), None)
 
+        # Pre-login
+        login_page = self.c.get(reverse('login'))
+        self.assertEqual(login_page.status_code, 200)
+        content = login_page.content.decode('utf-8')
+        self.assert_in_html(content, '#page_title', ['Login to Arcfire.'])
+        self.assert_in_html(content, 'nav > div#nav_container',
+                ['Login'], ['Logout'])
+
+        # Login
+        response = self.c.post(reverse('login'),
+            {'username': 'wellington', 'password': 'waterloo'}, follow=True,)
+        self.assertRedirects(response, reverse('login'))
+        self.assertEqual(
+            int(self.c.session.get('_auth_user_id')),self.duke.pk)
+
+        # Make sure resulting page is right: correct message, nav changes
+        content = response.content.decode('utf-8')
+        self.assert_in_html(content, '#messages', ['Login successful.'])
+        self.assert_in_html(content, '#nav_absolute', ['Logout'], ['Login'])

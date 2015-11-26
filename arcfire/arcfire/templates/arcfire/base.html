@@ -32,17 +32,15 @@
 
         <h1 id="page_title">{{ page_title }}</h1>
 
-        <div id="messages">
-        {% block messages %}
         {% if messages %}
-            <ul>
-                {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {% block messages %}
+        <ul id="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+        </ul>
         {% endblock messages %}
-        </div>
+        {% endif %}
 
         <div id="figure">
         {% block figure %}
@@ -65,7 +63,7 @@
 
             {% if parent_pages %}
             <h4>Relative</h4>
-            <ul>
+            <ul id="nav_relative">
                 {% for p in parent_pages %}
                 <li><a href="{% url p.0 %}">{{ p.1 }}</a></li>
                 {% endfor %}
@@ -74,7 +72,7 @@
             {% endif %}
 
             <h4>Absolute</h4>
-            <ul>
+            <ul id="nav_absolute">
                 {% for m in nav_models %}
                 <li><a href="{% url m.url_name %}">{{ m.name_plural | title }}</a></li>
                 {% endfor %}
