@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import (
     REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout)
 from django.contrib.auth.forms import AuthenticationForm
@@ -31,7 +32,7 @@ class HomeView(TemplateView):
 
         context.update({
             'window_title': 'Home',
-            'page_title': 'Home',
+            'page_title': 'Welcome to Arcfire.',
             'parent_pages': parent_pages
         })
         return context
@@ -51,7 +52,7 @@ class LoginView(FormView):
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
-        # Sets a test cookie to make sure the user has cookies enabled
+        # Sets a test cookie to ensure cookies are enabled
         request.session.set_test_cookie()
 
         return super(LoginView, self).dispatch(request, *args, **kwargs)
@@ -59,19 +60,21 @@ class LoginView(FormView):
     def form_valid(self, form):
         auth_login(self.request, form.get_user())
 
-        # If the test cookie worked, go ahead and
-        # delete it since its no longer needed
+        # If the test cookie worked, delete it since it's no longer needed
         if self.request.session.test_cookie_worked():
             self.request.session.delete_test_cookie()
+
+        # report to user
+        messages.add_message(self.request,
+            messages.SUCCESS, 'Login successful.')
 
         return super(LoginView, self).form_valid(form)
 
     def get_success_url(self):
-        print(self.request.POST.get(self.redirect_field_name))
-
         redirect_to = self.request.POST.get(self.redirect_field_name)
         if not is_safe_url(url=redirect_to, host=self.request.get_host()):
             redirect_to = self.success_url
+
         return redirect_to
 
     def get_context_data(self, *args, **kwargs):
@@ -84,8 +87,8 @@ class LoginView(FormView):
         )
 
         context.update({
-            'window_title': 'Authenticate',
-            'page_title': 'Authenticate',
+            'window_title': 'Login',
+            'page_title': 'Login to Arcfire.',
             'parent_pages': parent_pages
         })
         return context
@@ -99,6 +102,11 @@ class LogoutView(RedirectView):
 
     def get(self, request, *args, **kwargs):
         auth_logout(request)
+
+        # report to user
+        messages.add_message(self.request,
+            messages.SUCCESS, 'You have been logged out.')
+
         return super(LogoutView, self).get(request, *args, **kwargs)
 
 
