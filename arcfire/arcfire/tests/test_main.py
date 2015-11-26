@@ -65,9 +65,8 @@ class TemplateTestCase(TestUtils):
         self.assertEqual(response_2.status_code, 200)
         self.assertEqual(response_1.content, response_2.content)
 
-        content = response_1.content.decode('utf-8')
         self.assert_in_html(
-            content, '#page_title', ['Welcome to Arcfire.'], ['Flurble.'])
+            response_1, '#page_title', ['Welcome to Arcfire.'], ['Flurble.'])
 
     def test_urls(self):
         '''
@@ -107,8 +106,7 @@ class TemplateTestCase(TestUtils):
             self.assertEqual(r.status_code, 200)
 
             # decode and make sure each has basic elements
-            content = r.content.decode('utf-8')
-            self.assert_in_html(content, 'nav > div#nav_container > h3',
+            self.assert_in_html(r, 'nav > div#nav_container > h3',
                 ['Navigation'], ['Flurble.'])
 
 
@@ -134,9 +132,8 @@ class UserTestCase(TestUtils):
         # Pre-login
         login_page = self.c.get(reverse('login'))
         self.assertEqual(login_page.status_code, 200)
-        content = login_page.content.decode('utf-8')
-        self.assert_in_html(content, '#page_title', ['Login to Arcfire.'])
-        self.assert_in_html(content, 'nav > div#nav_container',
+        self.assert_in_html(login_page, '#page_title', ['Login to Arcfire.'])
+        self.assert_in_html(login_page, 'nav > div#nav_container',
                 ['Login'], ['Logout'])
 
         # Login
@@ -147,9 +144,9 @@ class UserTestCase(TestUtils):
             int(self.c.session.get('_auth_user_id')),self.duke.pk)
 
         # Make sure resulting page is right: correct message, nav changes
-        content = response.content.decode('utf-8')
-        self.assert_in_html(content, '#messages', ['Login successful.'])
-        self.assert_in_html(content, '#nav_absolute', ['Logout'], ['Login'])
+        
+        self.assert_in_html(response, '#messages', ['Login successful.'])
+        self.assert_in_html(response, '#nav_absolute', ['Logout'], ['Login'])
 
     def test_logout(self):
         '''

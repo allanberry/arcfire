@@ -8,7 +8,8 @@ class TestUtils(TestCase):
 
     def get_elements(self, html, selector):
         '''
-        Parse html for all elements which conform to a selector, and return them as a list of strings.
+        Parse html for all elements which conform to a selector,
+        and return them as a list of strings.
         '''
         tree = lxml.html.fromstring(html)
         sel = CSSSelector(selector)
@@ -22,16 +23,18 @@ class TestUtils(TestCase):
         return text_results
 
 
-    def assert_in_html(self, html, selector, yes=[], no=[]):
+    def assert_in_html(self,
+        response, selector, yes=[], no=[], encoding='utf-8'):
         '''
-        Make sure every 'yes' element exists in html, and every 'no' element does not.  
-        Limited by selector, which should indicate singular elements (id rather than class).
+        Make sure every 'yes' element exists in html, and every 'no' element
+        does not, limited by selector.  Intended for singular elements.
         '''
-        elements = self.get_elements(html, selector)
+        content = response.content.decode(encoding)
+        elements = self.get_elements(content, selector)
         # each yes must be in every element
         # each no must not be in any element
         for element in elements:
-            element = element.decode('utf-8')
+            element = element.decode(encoding)
             for item in yes:
                 self.assertIn(item, element)
             for item in no:
