@@ -110,9 +110,50 @@ class LogoutView(RedirectView):
         return super(LogoutView, self).get(request, *args, **kwargs)
 
 
-# # # # # # # # # # # # # #
-# Individual Model Views  #
-# # # # # # # # # # # # # #
+class ModelView(DetailView):
+    '''
+    Single model pages.
+    '''
+    template_name = "arcfire/model.html"
+    # parent_view = HomeView
+
+    def dispatch(self, request, *args, **kwargs):
+        # Override dispatch to set model instance variable.
+        self.model = self.kwargs.pop('model')
+        
+        return super(ModelView, self).dispatch(request, *args, **kwargs)  
+
+    def get_template_names(self, *args, **kwargs):   
+        # Provide a template to use; otherwise, use default.
+        templates = [
+            'arcfire/{}.html'.format(self.model._meta.verbose_name),
+            'arcfire/model.html'] # default/fallback
+
+        # include (at the end) any which might be already fetched
+        templates.extend(
+            super(ModelView, self).get_template_names(*args, **kwargs))
+        
+        return templates  
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ModelView, self).get_context_data(*args, **kwargs)
+
+        # parent pages, in ('url_name', 'page_title') format
+        # Allows multiple, ordered parents for breadcrumbs
+        parent_pages = (
+            ('home', 'Home'),
+            # ('{}_list'.format(self.parent_view.model._meta.verbose_name),
+            #     self.parent_view.model._meta.verbose_name_plural.title()),
+        )
+
+        context.update({
+            'window_title': self.object.name.title(),
+            'page_title': self.object.name.title(),
+            'parent_pages': parent_pages
+        })
+
+        return context
+
 
 class ModelListView(ListView):
     '''
@@ -134,15 +175,19 @@ class ModelListView(ListView):
     def dispatch(self, request, *args, **kwargs):
         # Override dispatch to set model instance variable.
         self.model = self.kwargs.pop('model')
+        
         return super(ModelListView, self).dispatch(request, *args, **kwargs)        
 
     def get_template_names(self, *args, **kwargs):   
         # Provide a template to use; otherwise, use default.
         templates = [
             'arcfire/{}_list.html'.format(self.model._meta.verbose_name),
-            'arcfire/model_list.html'] # default
+            'arcfire/model_list.html'] # default/fallback
+
+        # include (at the end) any which might be already fetched
         templates.extend(
             super(ModelListView, self).get_template_names(*args, **kwargs))
+        
         return templates
 
     def get_context_data(self, *args, **kwargs):
@@ -159,118 +204,5 @@ class ModelListView(ListView):
             'model_name_plural': self.model._meta.verbose_name_plural,
             'parent_pages': parent_pages
         })
+
         return context
-
-
-# # # # # # # # # # # # # #
-# Individual Model Views  #
-# # # # # # # # # # # # # #
-
-class ModelView(DetailView):
-    '''
-    Abstract base class for individual model pages, below.
-    '''
-    template_name = "arcfire/model.html"
-    # parent_view = HomeView
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(ModelView, self).get_context_data(*args, **kwargs)
-
-        # parent pages, in ('url_name', 'page_title') format
-        # Allows multiple, ordered parents for breadcrumbs
-        parent_pages = (
-            ('home', 'Home'),
-            # ('{}_list'.format(self.parent_view.model._meta.verbose_name),
-            #     self.parent_view.model._meta.verbose_name_plural.title()),
-        )
-
-        context.update({
-            'window_title': self.object.name.title(),
-            'page_title': self.object.name.title(),
-            'parent_pages': parent_pages
-        })
-        return context
-
-
-class EventView(ModelView):
-    '''
-    A single Event.
-    '''
-    model = Event
-    # parent_view = EventListView
-
-
-class ThingView(ModelView):
-    '''
-    A single Thing.
-    '''
-    model = Thing
-    # parent_view = ThingListView
-
-
-class KeywordView(ModelView):
-    '''
-    A single Keyword.
-    '''
-    model = Keyword
-    # parent_view = KeywordListView
-
-
-class PersonView(ModelView):
-    '''
-    A single Person.
-    '''
-    model = Person
-    # parent_view = PersonListView
-
-
-class PictureView(ModelView):
-    '''
-    A single Picture.
-    '''
-    model = Picture
-    # parent_view = PictureListView
-
-
-class PlanView(ModelView):
-    '''
-    A single Plan.
-    '''
-    model = Plan
-    # parent_view = PlanListView
-
-
-class PlaceView(ModelView):
-    '''
-    A single Place.
-    '''
-    model = Place
-    # parent_view = PlaceListView
-
-
-class PropertyView(ModelView):
-    '''
-    A single Property.
-    '''
-    model = Property
-    # parent_view = PropertyListView
-
-
-class LocationView(ModelView):
-    '''
-    A single Location.
-    '''
-    model = Location
-    # parent_view = LocationListView
-
-
-class RelationView(ModelView):
-    '''
-    A single Relation.
-    '''
-    model = Relation
-    # parent_view = RelationListView
-
-
-# class CollectionView(ModelView):
-# class GroupView(ModelView):
