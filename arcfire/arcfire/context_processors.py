@@ -1,45 +1,26 @@
-from arcfire.models import (
-        # Collection, 
-        Event,
-        # Group,
-        # Item,
-        Keyword,
-        #Location,
-        Person,
-        Picture,
-        Place,
-        # Plan,
-        Property,  
-    )
+from arcfire.models import *
 
 models_dict = {
-    # Collection: 'collection_list',
     Event: 'event_list',
-    # Group: 'group_list',
-    # Item: 'item_list',
     Keyword: 'keyword_list',
-    # Location: 'location_list',
     Person: 'person_list',
     Picture: 'picture_list',
     Place: 'place_list',
-    # Plan: 'plan_list',
+    Plan: 'plan_list',
     Property: 'property_list',
+    Thing: 'thing_list',
 }
 
 models_list = [
-    # Collection, 
     Event,
-    # Group,
-    # Item,
     Keyword,
-    #Location,
     Person,
     Picture,
     Place,
-    # Plan,
-    Property,  
+    Plan,
+    Property,
+    Thing,
 ]
-
 
 def arcfire_global_context(request):
     '''
@@ -48,7 +29,6 @@ def arcfire_global_context(request):
     # NAVIGATION
     # Populate navigation with a list of models.
     # Add further links afterward if necessary.
-
     nav_models = [{
         'name_plural': m._meta.verbose_name_plural,
         'url_name': get_model_url(m)
@@ -64,4 +44,3 @@ def get_model_url(model):
     Link url names back from model names.
     '''
     return models_dict[model]
-

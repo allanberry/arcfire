@@ -12,7 +12,7 @@ from django.views.generic import FormView, RedirectView
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from arcfire.models import Picture, Plan, Keyword, Property, Thing, Event, Person, Place, Collection, Group, Location, Relation
+from arcfire.models import *
 
 import inflection
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
@@ -117,11 +117,11 @@ class ModelView(DetailView):
     template_name = "arcfire/model.html"
     # parent_view = HomeView
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, *args, **kwargs):
         # Override dispatch to set model instance variable.
         self.model = self.kwargs.pop('model')
         
-        return super(ModelView, self).dispatch(request, *args, **kwargs)  
+        return super(ModelView, self).dispatch(*args, **kwargs)  
 
     def get_template_names(self, *args, **kwargs):   
         # Provide a template to use; otherwise, use default.
@@ -158,36 +158,33 @@ class ModelView(DetailView):
 class ModelListView(ListView):
     '''
     Abstract class for providing functionality to further model views.
-
-    TODO: put the following somewhere else.
-    Places presented on a map.
-    Pictures presented in a gallery.
-    Plans presented in a gallery/list.
-    Keywords presented possibly in a tag cloud.
-    Properties presented by organization into a hierarchy. 
-    Things presented in dictionary form.
-    Events presented in a timeline.
-    People/Characters presented in a network graph.
-    Locations presented on a map; see PlaceListView
-    Relations presented... in a list?  In a series of chord graphs?
     '''
 
-    def dispatch(self, request, *args, **kwargs):
+    # default template; should be able to (minimally) display any model
+    template_name = 'arcfire/model_list.html'
+
+    def dispatch(self, *args, **kwargs):
         # Override dispatch to set model instance variable.
         self.model = self.kwargs.pop('model')
-        
-        return super(ModelListView, self).dispatch(request, *args, **kwargs)        
+        return super(ModelListView, self).dispatch(*args, **kwargs)        
 
-    def get_template_names(self, *args, **kwargs):   
+    def get_template_names(self, *args, **kwargs):
         # Provide a template to use; otherwise, use default.
-        templates = [
-            'arcfire/{}_list.html'.format(self.model._meta.verbose_name),
-            'arcfire/model_list.html'] # default/fallback
+        templates = super(
+            ModelListView, self).get_template_names(*args, **kwargs)
+        model_templates = {
+            Event:      'arcfire/timeline.html',
+            Keyword:    'arcfire/inline_list.html',
+            Person:     'arcfire/network.html',
+            Picture:    'arcfire/gallery.html',
+            Place:      'arcfire/map.html',
+            Plan:       'arcfire/gallery.html',
+            Property:   'arcfire/tree.html',
+            Thing:      'arcfire/glossary.html',
+        }
+        if model_templates.get(self.model):
+            templates.insert(0, model_templates[self.model])
 
-        # include (at the end) any which might be already fetched
-        templates.extend(
-            super(ModelListView, self).get_template_names(*args, **kwargs))
-        
         return templates
 
     def get_context_data(self, *args, **kwargs):

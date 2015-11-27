@@ -3,20 +3,7 @@ from django.contrib.auth.models import User
 import factory
 from .TestUtils import TestUtils
 from django.core.urlresolvers import reverse
-from arcfire.models import (
-    Collection,
-    Event,
-    Group,
-    Keyword,
-    Location,
-    Person,
-    Picture,
-    Place,
-    Plan,
-    Property,
-    Relation,
-    Thing,
-)
+from arcfire.models import *
 
 
 class ModelTestCase(TestUtils):
@@ -41,10 +28,7 @@ class TemplateTestCase(TestUtils):
     '''
     def setUp(self):
         self.c = Client()
-        # Collection.objects.create(name="Gum Wall", slug="gum-wall")
         Event.objects.create(name="War of 1812", slug="war-1812")
-        # Group.objects.create(
-           # name="Democratic Party", slug="democratic-party")
         Keyword.objects.create(name="Wars", slug="wars")
         Person.objects.create(name="Napoleon", slug="napoleon")
         Picture.objects.create(
@@ -73,23 +57,18 @@ class TemplateTestCase(TestUtils):
         Primary urls should load.
         '''
         responses = []
-        # responses.append(self.c.get(reverse('collection_list'))) # TODO 
+        responses.append(self.c.get(reverse('home')))
+        responses.append(self.c.get(reverse('login')))
+
         responses.append(self.c.get(reverse('event_list')))
-        # responses.append(self.c.get(reverse('group_list'))) # TODO 
         responses.append(self.c.get(reverse('keyword_list')))
-        responses.append(self.c.get(reverse('location_list')))
         responses.append(self.c.get(reverse('person_list')))
         responses.append(self.c.get(reverse('picture_list')))
         responses.append(self.c.get(reverse('place_list')))
         responses.append(self.c.get(reverse('plan_list')))
         responses.append(self.c.get(reverse('property_list')))
-        responses.append(self.c.get(reverse('relation_list')))
         responses.append(self.c.get(reverse('thing_list')))
-        responses.append(self.c.get(reverse('login')))
-        # responses.append(self.c.get(
-        #     reverse('collection', args=['gum-wall']))) # TODO
-        # responses.append(self.c.get(
-        #     reverse('group', args=['democratic-party']))) # TODO
+
         responses.append(self.c.get(reverse('event', args=['war-1812'])))
         responses.append(self.c.get(reverse('keyword', args=['wars'])))
         responses.append(self.c.get(reverse('person', args=['napoleon'])))
@@ -98,7 +77,6 @@ class TemplateTestCase(TestUtils):
         responses.append(self.c.get(reverse('plan', args=['elevation'])))
         responses.append(self.c.get(reverse('property', args=['brown-hair'])))
         responses.append(self.c.get(reverse('thing', args=['curling-iron'])))
-        # responses.append(self.c.get(reverse('location', args=[]))) # TODO 
 
 
         for r in responses:

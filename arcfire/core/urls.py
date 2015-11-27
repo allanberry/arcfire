@@ -44,8 +44,6 @@ urlpatterns = [
         kwargs={'model':Event}, name='event_list'),
     url(r'^keywords$', ModelListView.as_view(),
         kwargs={'model':Keyword}, name='keyword_list'),
-    url(r'^locations$', ModelListView.as_view(),
-        kwargs={'model':Location}, name='location_list'),
     url(r'^people$', ModelListView.as_view(),
         kwargs={'model':Person}, name='person_list'),
     url(r'^pictures$', ModelListView.as_view(),
@@ -56,14 +54,8 @@ urlpatterns = [
         kwargs={'model':Plan}, name='plan_list'),
     url(r'^properties$', ModelListView.as_view(),
         kwargs={'model':Property}, name='property_list'),
-    url(r'^relations$', ModelListView.as_view(),
-        kwargs={'model':Relation}, name='relation_list'),
     url(r'^thing$', ModelListView.as_view(),
         kwargs={'model':Thing}, name='thing_list'),
-    # url(r'^groups$', ModelListView.as_view(),
-        # kwargs={'model':Group}, name='group_list'),
-    # url(r'^collections$', ModelListView.as_view(),
-        # kwargs={'model':Collection}, name='collection_list'),
 
     # model views
     url(r'^events/(?P<slug>[-\w]+)$', ModelView.as_view(),
@@ -83,15 +75,14 @@ urlpatterns = [
     url(r'^things/(?P<slug>[-\w]+)$', ModelView.as_view(),
         kwargs={'model':Thing}, name='thing'),
 
-    url(r'^relations/(?P<source>[-\w]+)/(?P<predicate>[-\w]+)/(?P<target>[-\w]+)$',
-        ModelView.as_view(), kwargs={'model':Relation}, name='relation'),
-    url(r'^locations/(?P<longitude>[-\w]+)/(?P<latitude>[-\w]+)/(?P<altitude>[-\w]+)/(?P<time>[-\w]+)$',
-        ModelView.as_view(), kwargs={'model':Location}, name='location'),
-
+    # url(r'^relations/(?P<source>[-\w]+)/(?P<predicate>[-\w]+)/(?P<target>[-\w]+)$',
+    #     ModelView.as_view(), kwargs={'model':Relation}, name='relation'),
+    # url(r'^locations/(?P<longitude>[-\w]+)/(?P<latitude>[-\w]+)/(?P<altitude>[-\w]+)/(?P<time>[-\w]+)$',
+    #     ModelView.as_view(), kwargs={'model':Location}, name='location'),
     # url(r'^collections/(?P<slug>[-\w]+)$', ModelView.as_view(),
-        # kwargs={'model':Thing}, name='collection'),
+    #     kwargs={'model':Thing}, name='collection'),
     # url(r'^groups/(?P<slug>[-\w]+)$', ModelView.as_view(),
-        # kwargs={'model':Thing}, name='group'),
+    #     kwargs={'model':Thing}, name='group'),
 
     # DRF
     url(r'^api/', include(router.urls)),

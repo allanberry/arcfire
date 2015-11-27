@@ -9,8 +9,21 @@
 {% endblock js %}
 
 
-{% block ground %}
-<div id="map" />
+{% block content %}
+<p>A Map of {{ model_name_plural | title }}.</p>
+
+{% if object_list %}
+<ul>
+{% for obj in object_list %}
+  <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No {{ model_name_plural }} found.</p>
+{% endif %}
+
+<div id="map" ></div>
+
 <script>
 var width = 500,
     height = 500;
@@ -90,6 +103,5 @@ d3.json(world, function(error, world) {
     });
 
 });
-
 </script>
-{% endblock ground %}
+{% endblock content %}
