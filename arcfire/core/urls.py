@@ -4,8 +4,10 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
-from arcfire.views import *
-from arcfire.models import *
+from arcfire.views import (
+    HomeView, LoginView, LogoutView, ModelView, ModelListView)
+from arcfire.models import (
+    Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
 
 
 # # # # # # #

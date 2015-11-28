@@ -41,18 +41,17 @@ class Base(models.Model):
         except self.DoesNotExist:
             return None
 
-    def get_class(self):
+    def get_class_name(self):
+        '''Class name for template display.'''
         return self.__class__.__name__
 
     def get_absolute_url(self):
+        '''Canonical instance url.'''
         return reverse(str(self.__class__.__name__).lower(), args=(self.slug, ))
 
     def get_list_url(self):
-        '''
-        While get_absolute_url gets a single instance variable,
-        this method gets the variable for multiple instances: the 'list'
-        '''
-        return reverse('{}_list'.format(self.get_class().lower()))
+        '''Canonical instance list url.'''
+        return reverse('{}_list'.format(self.get_class_name().lower()))
 
 
 class Common(Base):

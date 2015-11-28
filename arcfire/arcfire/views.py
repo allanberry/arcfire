@@ -13,7 +13,8 @@ from django.views.generic import FormView, RedirectView
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from arcfire.models import *
+from arcfire.models import (
+    Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
 
 import inflection
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
@@ -155,34 +156,46 @@ class ModelView(DetailView):
         templates.extend(
             super(ModelView, self).get_template_names(*args, **kwargs))
         
-        return templates  
+        return templates
+
+    def get_nav_relative(self):
+        '''A data structure to allow local wayfinding'''
+
+        # each dict is a link
+        # must have property 'name'; others are optional
+        nav_relative = [
+            {'name': 'Home',
+             'url': reverse_lazy('home')},
+            {'name': 'Up'}, # TODO
+            {'name': 'Down'}, # TODO
+            {'name': 'First', 
+             'url': self.model.objects.all().last().get_absolute_url()},
+            {'name': 'Last', 
+             'url': self.model.objects.all().first().get_absolute_url()},
+        ]
+
+        if self.object.get_previous():
+            nav_relative.append(
+                {'name': 'Previous',
+                 'url': self.object.get_previous().get_absolute_url()})
+        if self.object.get_next():
+            nav_relative.append(
+                {'name': 'Next',
+                 'url': self.object.get_next().get_absolute_url()})
+
+        return nav_relative
+
 
     def get_context_data(self, *args, **kwargs):
         context = super(ModelView, self).get_context_data(*args, **kwargs)
 
-        nav_relative = {
-            # basically a breadcrumb, in the format ('Name to Print', url)
-            'up': [
-                # top level
-                ('Home', reverse_lazy('home')),
-                # immediate parent
-                (self.object._meta.verbose_name_plural.title(),
-                    self.object.get_list_url())
-            ],
-            'first': self.model.objects.all().first(),
-            'previous': self.object.get_previous(),
-            'this': self.object,
-            'next': self.object.get_next(),
-            'last': self.model.objects.all().last(),
-            # 'down': [],
-        }
+        nav_relative = self.get_nav_relative()
 
         context.update({
             'window_title': self.object.name.title(),
             'page_title': self.object.name.title(),
             'nav_relative': nav_relative,
         })
-
         return context
 
 
@@ -236,5 +249,4 @@ class ModelListView(ListView):
             'model_name_plural': self.model._meta.verbose_name_plural,
             'nav_relative': nav_relative,
         })
-
         return context
