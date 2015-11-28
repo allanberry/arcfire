@@ -66,10 +66,27 @@
             {% if parent_pages %}
             <h4>Relative</h4>
             <ul id="nav_relative">
+                <!-- Up -->
                 {% for p in parent_pages %}
                 <li><a href="{% url p.0 %}">{{ p.1 }}</a></li>
                 {% endfor %}
-                <li>{{ page_title }}</li>
+
+                <!-- Previous -->
+                {% if object %}
+                    {% if object.get_prev %}
+                    <li><a href="{{ object.get_prev.get_absolute_url }}">Prev: {{ object.get_prev.name }}</a></li>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Current -->
+                <li>This: {{ page_title }}</li>
+
+                <!-- Next -->
+                {% if object %}
+                    {% if object.get_next %}
+                    <li><a href="{{ object.get_next.get_absolute_url }}">Next: {{ object.get_next.name }}</a></li>
+                    {% endif %}
+                {% endif %}
             </ul>
             {% endif %}
 

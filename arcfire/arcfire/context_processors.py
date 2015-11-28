@@ -44,3 +44,4 @@ def get_model_url(model):
     Link url names back from model names.
     '''
     return models_dict[model]
+

@@ -19,9 +19,20 @@ class Base(models.Model):
         abstract = True
     
     created_at = models.DateTimeField(
-        editable=False, blank=False, null=True, auto_now_add=True)
+        editable=False, blank=False, auto_now_add=True)
     updated_at = models.DateTimeField(
         blank=False, null=True, auto_now=True)
+
+    def get_class(self):
+        return self.__class__.__name__
+
+    def get_prev(self):
+        '''Overloadable relative navigation'''
+        return self.get_previous_by_created_at()
+
+    def get_next(self):
+        '''Overloadable relative navigation'''
+        return self.get_next_by_created_at()
 
 
 class Common(Base):
