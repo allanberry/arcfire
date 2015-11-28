@@ -4,7 +4,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Level 0: base abstract and infrastructure classes #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -23,16 +22,37 @@ class Base(models.Model):
     updated_at = models.DateTimeField(
         blank=False, null=True, auto_now=True)
 
+
+    def get_previous(self):
+        '''
+        Overloadable relative navigation.
+        Object previous/next is managed here, at the model level.
+        Inter-model previous/next, like between model lists, is handled in views.
+        '''
+        try:
+            return self.get_previous_by_created_at()
+        except self.DoesNotExist:
+            return None
+
+    def get_next(self):
+        '''Overloadable relative navigation.  See get_previous, above.'''
+        try:
+            return self.get_next_by_created_at()
+        except self.DoesNotExist:
+            return None
+
     def get_class(self):
         return self.__class__.__name__
 
-    def get_prev(self):
-        '''Overloadable relative navigation'''
-        return self.get_previous_by_created_at()
+    def get_absolute_url(self):
+        return reverse(str(self.__class__.__name__).lower(), args=(self.slug, ))
 
-    def get_next(self):
-        '''Overloadable relative navigation'''
-        return self.get_next_by_created_at()
+    def get_list_url(self):
+        '''
+        While get_absolute_url gets a single instance variable,
+        this method gets the variable for multiple instances: the 'list'
+        '''
+        return reverse('{}_list'.format(self.get_class().lower()))
 
 
 class Common(Base):
@@ -47,9 +67,6 @@ class Common(Base):
 
     def __str__(self):
         return '{}'.format(self.name)
-
-    def get_absolute_url(self):
-        return reverse(str(self.__class__.__name__).lower(), args=(self.slug, ))
 
 
 class LifeMixin(models.Model):

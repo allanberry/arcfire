@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django.contrib import messages
 from django.contrib.auth import (
     REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout)
@@ -17,6 +18,27 @@ from arcfire.models import *
 import inflection
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
 # with D1.9
+
+class ViewConstants(object):
+    '''
+    A simple class for sharing functionality across views.
+    '''
+    # Models are ordered alphabetically.
+    model_templates = {
+        Event:      'arcfire/timeline.html',
+        Keyword:    'arcfire/inline_list.html',
+        Person:     'arcfire/network.html',
+        Picture:    'arcfire/gallery.html',
+        Place:      'arcfire/map.html',
+        Plan:       'arcfire/gallery.html',
+        Property:   'arcfire/tree.html',
+        Thing:      'arcfire/glossary.html',
+    }
+
+    # provide model_template_mapping
+    model_templates_ordered = OrderedDict(
+        sorted(model_templates.items(),
+            key=lambda t: t[0].__class__.__name__))
 
 
 class HomeView(TemplateView):
@@ -138,18 +160,27 @@ class ModelView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(ModelView, self).get_context_data(*args, **kwargs)
 
-        # parent pages, in ('url_name', 'page_title') format
-        # Allows multiple, ordered parents for breadcrumbs
-        parent_pages = (
-            ('home', 'Home'),
-            # ('{}_list'.format(self.parent_view.model._meta.verbose_name),
-            #     self.parent_view.model._meta.verbose_name_plural.title()),
-        )
+        nav_relative = {
+            # basically a breadcrumb, in the format ('Name to Print', url)
+            'up': [
+                # top level
+                ('Home', reverse_lazy('home')),
+                # immediate parent
+                (self.object._meta.verbose_name_plural.title(),
+                    self.object.get_list_url())
+            ],
+            'first': self.model.objects.all().first(),
+            'previous': self.object.get_previous(),
+            'this': self.object,
+            'next': self.object.get_next(),
+            'last': self.model.objects.all().last(),
+            # 'down': [],
+        }
 
         context.update({
             'window_title': self.object.name.title(),
             'page_title': self.object.name.title(),
-            'parent_pages': parent_pages
+            'nav_relative': nav_relative,
         })
 
         return context
@@ -157,49 +188,53 @@ class ModelView(DetailView):
 
 class ModelListView(ListView):
     '''
-    Abstract class for providing functionality to further model views.
+    An abstract class for compound model views: where models are seen in list 
+    or group format.  
     '''
 
     # default template; should be able to (minimally) display any model
     template_name = 'arcfire/model_list.html'
 
     def dispatch(self, *args, **kwargs):
-        # Override dispatch to set model instance variable.
+        # override dispatch to set model instance variable
         self.model = self.kwargs.pop('model')
+
         return super(ModelListView, self).dispatch(*args, **kwargs)        
 
     def get_template_names(self, *args, **kwargs):
-        # Provide a template to use; otherwise, use default.
+        # start with the extant list of templates, if relevant
         templates = super(
             ModelListView, self).get_template_names(*args, **kwargs)
-        model_templates = {
-            Event:      'arcfire/timeline.html',
-            Keyword:    'arcfire/inline_list.html',
-            Person:     'arcfire/network.html',
-            Picture:    'arcfire/gallery.html',
-            Place:      'arcfire/map.html',
-            Plan:       'arcfire/gallery.html',
-            Property:   'arcfire/tree.html',
-            Thing:      'arcfire/glossary.html',
-        }
-        if model_templates.get(self.model):
-            templates.insert(0, model_templates[self.model])
+
+        # add relevant template specified in constants
+        # to start of template list
+        c = ViewConstants()
+        if c.model_templates_ordered.get(self.model):
+            templates.insert(0, c.model_templates_ordered[self.model])
 
         return templates
 
     def get_context_data(self, *args, **kwargs):
         context = super(ModelListView, self).get_context_data(*args, **kwargs)
-        parent_pages = (
-            ('home', 'Home'),
-        )
+
+        nav_relative = {
+            'up': [
+                ('home', reverse_lazy('home'))
+            ],
+            'first': '',
+            'previous': '',
+            'this': '',
+            'next': '',
+            'last': '',
+            'down': [],
+        }
 
         context.update({
             'window_title': self.model._meta.verbose_name_plural.title(),
             'page_title': self.model._meta.verbose_name_plural.title(),
-
             'model_name': self.model._meta.verbose_name,
             'model_name_plural': self.model._meta.verbose_name_plural,
-            'parent_pages': parent_pages
+            'nav_relative': nav_relative,
         })
 
         return context

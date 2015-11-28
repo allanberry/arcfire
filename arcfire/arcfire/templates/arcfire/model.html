@@ -8,3 +8,46 @@ May eventually be superseded.
 <h1 id="page_title">{{ page_title }}</h1>
 <p>A/n {{ object.get_class }}: {{ object }}</p>
 {% endblock main %}
+
+
+{% block nav_relative %}
+<h4>Relative</h4>
+<ul>
+    <!-- Up -->
+    {% if nav_relative.up %}
+    <li>Up:
+        <ul>
+            {% for item in nav_relative.up %}
+                <li><a href="{{ item.1 }}">{{ item.0 }}</a></li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endif %}
+
+    <!-- First -->
+    <li>First: <a href="{{ nav_relative.first.get_absolute_url }}">{{ nav_relative.first }}</a></li>
+
+    <!-- Previous -->
+    {% if nav_relative.previous %}
+    <li>Previous: <a href="{{ nav_relative.previous.get_absolute_url }}">{{ nav_relative.previous }}</a></li>
+    {% else %}
+    <li>Previous: None</li>
+    {% endif %}
+
+    <!-- Current -->
+    <li>This: {{ nav_relative.this }}</li>
+
+    <!-- Next -->
+    {% if nav_relative.next %}
+    <li>Next: <a href="{{ nav_relative.next.get_absolute_url }}">{{ nav_relative.next }}</a></li>
+    {% else %}
+    <li>Next: None</li>
+    {% endif %}
+
+    <!-- Last -->
+    <li>Last: <a href="{{ nav_relative.last.get_absolute_url }}">{{ nav_relative.last }}</a></li>
+
+    <!-- Down TODO -->
+    {# <li>Down: <a>Down</a></li> #}
+</ul>
+{% endblock nav_relative %}
