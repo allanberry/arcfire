@@ -20,26 +20,22 @@ import inflection
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
 # with D1.9
 
-class ViewConstants(object):
+class NavMixin(object):
     '''
-    A simple class for sharing functionality across views.
+    Mixin for shared functionality across views.
+    Currently this is only used in ModelView, but I'd like to expand its use.
     '''
-    # Models are ordered alphabetically.
-    model_templates = {
-        Event:      'arcfire/timeline.html',
-        Keyword:    'arcfire/inline_list.html',
-        Person:     'arcfire/network.html',
-        Picture:    'arcfire/gallery.html',
-        Place:      'arcfire/map.html',
-        Plan:       'arcfire/gallery.html',
-        Property:   'arcfire/tree.html',
-        Thing:      'arcfire/glossary.html',
-    }
 
-    # provide model_template_mapping
-    model_templates_ordered = OrderedDict(
-        sorted(model_templates.items(),
-            key=lambda t: t[0].__class__.__name__))
+    def get_nav_relative(self, *args, **kwargs):
+        '''
+        A data structure to allow local wayfinding
+        This defines the structure.  Meant to be heavily amended in subclass.
+        '''
+        nav_relative = [
+            {'name': 'Home',
+             'url': reverse_lazy('home')},
+        ]
+        return nav_relative
 
 
 class HomeView(TemplateView):
@@ -133,9 +129,10 @@ class LogoutView(RedirectView):
         return super(LogoutView, self).get(request, *args, **kwargs)
 
 
-class ModelView(DetailView):
+class ModelView(NavMixin, DetailView):
     '''
     Single model pages.
+    Second level after Home.
     '''
     template_name = "arcfire/model.html"
     # parent_view = HomeView
@@ -158,29 +155,30 @@ class ModelView(DetailView):
         
         return templates
 
-    def get_nav_relative(self):
+    def get_nav_relative(self, *args, **kwargs):
         '''A data structure to allow local wayfinding'''
+        nav_relative = super(ModelView, self).get_nav_relative(*args, **kwargs)
 
         # each dict is a link
         # must have property 'name'; others are optional
-        nav_relative = [
-            {'name': 'Home',
-             'url': reverse_lazy('home')},
-            {'name': 'Up'}, # TODO
-            {'name': 'Down'}, # TODO
-            {'name': 'First', 
-             'url': self.model.objects.all().last().get_absolute_url()},
-            {'name': 'Last', 
+        nav_relative.extend([
+            {'name': 'Up: {}'.format(
+                self.object._meta.verbose_name_plural.title()),
+             'url': self.object.get_list_url()}, # TODO
+            # {'name': 'Down'}, # TODO
+            {'name': 'First: {}'.format(self.model.objects.all().first()), 
              'url': self.model.objects.all().first().get_absolute_url()},
-        ]
+            {'name': 'Last: {}'.format(self.model.objects.all().last()), 
+             'url': self.model.objects.all().last().get_absolute_url()},
+        ])
 
         if self.object.get_previous():
             nav_relative.append(
-                {'name': 'Previous',
+                {'name': 'Previous: {}'.format(self.object.get_previous()),
                  'url': self.object.get_previous().get_absolute_url()})
         if self.object.get_next():
             nav_relative.append(
-                {'name': 'Next',
+                {'name': 'Next: {}'.format(self.object.get_next()),
                  'url': self.object.get_next().get_absolute_url()})
 
         return nav_relative
@@ -192,8 +190,8 @@ class ModelView(DetailView):
         nav_relative = self.get_nav_relative()
 
         context.update({
-            'window_title': self.object.name.title(),
-            'page_title': self.object.name.title(),
+            'window_title': self.object.__str__().title(),
+            'page_title': self.object.__str__().title(),
             'nav_relative': nav_relative,
         })
         return context
@@ -203,50 +201,66 @@ class ModelListView(ListView):
     '''
     An abstract class for compound model views: where models are seen in list 
     or group format.  
+    Third level after ModelView and Home.
     '''
 
     # default template; should be able to (minimally) display any model
     template_name = 'arcfire/model_list.html'
 
+
     def dispatch(self, *args, **kwargs):
         # override dispatch to set model instance variable
         self.model = self.kwargs.pop('model')
 
-        return super(ModelListView, self).dispatch(*args, **kwargs)        
+        return super(ModelListView, self).dispatch(*args, **kwargs)
+
+    def get_model_template(self, *args, **kwargs):
+        '''
+        All models derived from Common can be viewed as a list in a template.
+        Which is best to view this model?
+        '''
+
+        # The best template for presenting any particular model list.
+        templates = [
+            {'model': Event,    'template': 'arcfire/timeline.html'},
+            {'model': Keyword,  'template': 'arcfire/inline_list.html'},
+            {'model': Person,   'template': 'arcfire/network.html'},
+            {'model': Picture,  'template': 'arcfire/gallery.html'},
+            {'model': Place,    'template': 'arcfire/map.html'},
+            {'model': Plan,     'template': 'arcfire/gallery.html'},
+            {'model': Property, 'template': 'arcfire/tree.html'},
+            {'model': Thing,    'template': 'arcfire/glossary.html'},
+        ]
+
+        # add relevant template to start of template list
+        model_template_dict = next(
+            (d for d in templates if d['model'] == self.model), None) 
+
+        if model_template_dict:
+            return model_template_dict['template']
+        else:
+            # just a default; should work though for any model.
+            return self.template     
 
     def get_template_names(self, *args, **kwargs):
         # start with the extant list of templates, if relevant
         templates = super(
             ModelListView, self).get_template_names(*args, **kwargs)
 
-        # add relevant template specified in constants
-        # to start of template list
-        c = ViewConstants()
-        if c.model_templates_ordered.get(self.model):
-            templates.insert(0, c.model_templates_ordered[self.model])
+        # standard templates for model lists are defined in the model
+        # add the relevant one to the 'templates' list
+        templates.insert(0, self.get_model_template(self.model))
 
         return templates
 
+
     def get_context_data(self, *args, **kwargs):
         context = super(ModelListView, self).get_context_data(*args, **kwargs)
-
-        nav_relative = {
-            'up': [
-                ('home', reverse_lazy('home'))
-            ],
-            'first': '',
-            'previous': '',
-            'this': '',
-            'next': '',
-            'last': '',
-            'down': [],
-        }
 
         context.update({
             'window_title': self.model._meta.verbose_name_plural.title(),
             'page_title': self.model._meta.verbose_name_plural.title(),
             'model_name': self.model._meta.verbose_name,
             'model_name_plural': self.model._meta.verbose_name_plural,
-            'nav_relative': nav_relative,
         })
         return context

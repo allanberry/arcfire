@@ -13,27 +13,3 @@
 <p>No {{ model_name_plural }} found.</p>
 {% endif %}
 {% endblock content %}
-
-
-{% block nav_relative %}
-<h4>Relative</h4>
-<ul>
-    <!-- Up -->
-    {% for p in parent_pages %}
-    <li><a href="{% url p.0 %}">{{ p.1 }}</a></li>
-    {% endfor %}
-
-    <!-- Previous -->
-    {% if previous %}
-    <li>Previous: <a>Previous</a></li>
-    {% endif %}
-
-    <!-- Current -->
-    <li>This: {{ page_title }}</li>
-
-    <!-- Next -->
-    {% if next %}
-    <li>Next: <a>Next</a></li>
-    {% endif %}
-</ul>
-{% endblock nav_relative %}

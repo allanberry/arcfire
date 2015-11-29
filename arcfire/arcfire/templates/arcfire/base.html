@@ -60,14 +60,22 @@
     {% block nav %}
         <h3>Navigation</h3>
 
+        {% if nav_relative %}
         <section id="nav_relative">
         {% block nav_relative %}
             <h4>Relative</h4>
             <ul>
-                <li>This: {{ page_title }}</li>
+                {% for item in nav_relative %}
+                <li>
+                    {% if item.url %}<a href="{{ item.url }}">{% endif %}
+                    {{ item.name }}
+                    {% if item.url %}</a>{% endif %}
+                </li>
+                {% endfor %}
             </ul>
         {% endblock nav_relative %}
-        </section>
+        </section><!-- / #nav_relative -->
+        {% endif %}
 
         <section id="nav_absolute">
         {% block nav_absolute %}
@@ -78,7 +86,7 @@
                 {% endfor %}
             </ul>
         {% endblock nav_absolute %}
-        </section>
+        </section><!-- / #nav_absolute -->
 
         <section id="nav_user">
         {% block nav_user %}
@@ -91,11 +99,7 @@
                 {% endif %}
             </ul>
         {% endblock nav_user %}
-        </section>
-
-
-
-
+        </section><!-- / #nav_user -->
 
     {% endblock nav %}
     </nav>

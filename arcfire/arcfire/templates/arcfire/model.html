@@ -8,17 +8,3 @@ May eventually be superseded.
 <h1 id="page_title">{{ page_title }}</h1>
 <p>A/n {{ object.get_class_name }}: {{ object }}</p>
 {% endblock introduction %}
-
-
-{% block nav_relative %}
-<h4>Relative</h4>
-<ul>
-    {% for item in nav_relative %}
-    <li>
-        {% if item.url %}<a href="{{ item.url }}">{% endif %}
-        {{ item.name }}
-        {% if item.url %}</a>{% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endblock nav_relative %}
