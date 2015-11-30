@@ -4,14 +4,6 @@
 {% block content %}
 <p>A Gallery of {{ model_name_plural | title }}.</p>
 
-{% if object_list %}
-<ul>
-{% for obj in object_list %}
-  <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
-{% endfor %}
-</ul>
-{% else %}
-<p>No {{ model_name_plural }} found.</p>
-{% endif %}
+{% include 'arcfire/partials/object_list.html' %}
 
 {% endblock content %}

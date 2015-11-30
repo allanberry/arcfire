@@ -87,6 +87,14 @@ class TemplateTestCase(TestUtils):
             self.assert_in_html(r, 'nav > div#nav_container > h3',
                 ['Navigation'], ['Flurble.'])
 
+    def test_header(self):
+        '''Header should exist, and should have all correct links.'''
+        pass
+
+    def test_footer(self):
+        '''Footer should exist, and should have all correct links.'''
+        pass
+
 
 class UserTestCase(TestUtils):
     '''
@@ -111,7 +119,7 @@ class UserTestCase(TestUtils):
         login_page = self.c.get(reverse('login'))
         self.assertEqual(login_page.status_code, 200)
         self.assert_in_html(login_page, '#page_title', ['Login to Arcfire.'])
-        self.assert_in_html(login_page, 'nav > div#nav_container',
+        self.assert_in_html(login_page, 'footer #user',
                 ['Login'], ['Logout'])
 
         # Login
@@ -124,7 +132,7 @@ class UserTestCase(TestUtils):
         # Make sure resulting page is right: correct message, nav changes
         
         self.assert_in_html(response, '#messages', ['Login successful.'])
-        self.assert_in_html(response, '#nav_absolute', ['Logout'], ['Login'])
+        self.assert_in_html(response, 'footer #user', ['Logout'], ['Login'])
 
     def test_logout(self):
         '''
@@ -139,3 +147,47 @@ class UserTestCase(TestUtils):
         # Logout
         self.c.get(reverse('logout'))
         self.assertEqual(self.c.session.get('_auth_user_id'), None)
+
+
+class NavigationTestCase(TestUtils):
+    '''
+    Tests covering main context processors and relative and absolute navigation pages.
+    '''
+
+    def test_arcfire_global_context(self):
+        pass
+
+    def get_model_url(self):
+        pass
+
+    # results in templates
+    def test_nav_relative_model(self):
+        pass
+
+    def test_rnav_elative_model_list(self):
+        pass
+
+    def test_nav_absolute(self):
+        pass
+
+    # views working correctly
+    def test_get_nav_relative(self):
+        pass
+
+    def test_get_model_template(self):
+        pass
+
+    def test_get_template_names(self):
+        pass
+
+# test messages
+
+# test templates extend
+
+
+class SearchTestCase(TestUtils):
+    '''
+    Tests covering search, both in rendered pages and behind the scenes.
+    '''
+    def test_results_page(self):
+        pass

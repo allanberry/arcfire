@@ -1,0 +1,17 @@
+{% extends 'arcfire/base.html' %}
+
+{% block content %}
+<p>Lists of various Models.</p>
+
+{% for search_result in search_results %}
+{% if search_result.result_set %}
+<p>{{ search_result.result_set.count }} <a href="{{ search_result.model_url }}">{{ search_result.model_name_plural }}</a> found:</p>
+{% with object_list=search_result.result_set %}
+{% include 'arcfire/partials/object_list.html' %}
+{% endwith %}
+{% else %}
+<!--<p>No {{ search_result.model_name_plural }} found.</p>-->
+{% endif %}
+{% endfor %}
+
+{% endblock content %}

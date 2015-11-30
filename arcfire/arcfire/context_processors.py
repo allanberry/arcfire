@@ -1,16 +1,5 @@
 from arcfire.models import *
 
-models_dict = {
-    Event: 'event_list',
-    Keyword: 'keyword_list',
-    Person: 'person_list',
-    Picture: 'picture_list',
-    Place: 'place_list',
-    Plan: 'plan_list',
-    Property: 'property_list',
-    Thing: 'thing_list',
-}
-
 models_list = [
     Event,
     Keyword,
@@ -43,5 +32,18 @@ def get_model_url(model):
     '''
     Link url names back from model names.
     '''
+
+    models_dict = {
+        Event: 'event_list',
+        Keyword: 'keyword_list',
+        Person: 'person_list',
+        Picture: 'picture_list',
+        Place: 'place_list',
+        Plan: 'plan_list',
+        Property: 'property_list',
+        Thing: 'thing_list',
+    }
+
+    # TODO this functionality is already in models; refactor this out.  
     return models_dict[model]
 

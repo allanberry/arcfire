@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
 from arcfire.views import (
-    HomeView, LoginView, LogoutView, ModelView, ModelListView)
+    HomeView, LoginView, LogoutView, SearchView,
+    ModelView, ModelListView)
 from arcfire.models import (
     Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
 
@@ -41,7 +42,7 @@ urlpatterns = [
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     
-    # model views
+    # model list views
     url(r'^events$', ModelListView.as_view(),
         kwargs={'model':Event}, name='event_list'),
     url(r'^keywords$', ModelListView.as_view(),
@@ -59,7 +60,11 @@ urlpatterns = [
     url(r'^thing$', ModelListView.as_view(),
         kwargs={'model':Thing}, name='thing_list'),
 
-    # model views
+    # other compound model views
+    url(r'^search$', SearchView.as_view(),
+        name='search'),
+
+    # single model views
     url(r'^events/(?P<slug>[-\w]+)$', ModelView.as_view(),
         kwargs={'model':Event}, name='event'),
     url(r'^keywords/(?P<slug>[-\w]+)$', ModelView.as_view(),
@@ -77,14 +82,6 @@ urlpatterns = [
     url(r'^things/(?P<slug>[-\w]+)$', ModelView.as_view(),
         kwargs={'model':Thing}, name='thing'),
 
-    # url(r'^relations/(?P<source>[-\w]+)/(?P<predicate>[-\w]+)/(?P<target>[-\w]+)$',
-    #     ModelView.as_view(), kwargs={'model':Relation}, name='relation'),
-    # url(r'^locations/(?P<longitude>[-\w]+)/(?P<latitude>[-\w]+)/(?P<altitude>[-\w]+)/(?P<time>[-\w]+)$',
-    #     ModelView.as_view(), kwargs={'model':Location}, name='location'),
-    # url(r'^collections/(?P<slug>[-\w]+)$', ModelView.as_view(),
-    #     kwargs={'model':Thing}, name='collection'),
-    # url(r'^groups/(?P<slug>[-\w]+)$', ModelView.as_view(),
-    #     kwargs={'model':Thing}, name='group'),
 
     # DRF
     url(r'^api/', include(router.urls)),

@@ -15,6 +15,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from arcfire.models import (
     Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
+from arcfire.search import get_query
 
 import inflection
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
@@ -47,12 +48,9 @@ class HomeView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(*args, **kwargs)
 
-        parent_pages = ()
-
         context.update({
             'window_title': 'Home',
             'page_title': 'Welcome to Arcfire.',
-            'parent_pages': parent_pages
         })
         return context
 
@@ -99,16 +97,9 @@ class LoginView(FormView):
     def get_context_data(self, *args, **kwargs):
         context = super(LoginView, self).get_context_data(*args, **kwargs)
 
-        # parent pages, in ('url_name', 'page_title') format
-        # Allows multiple, ordered parents for breadcrumbs
-        parent_pages = (
-            ('home', 'Home'),
-        )
-
         context.update({
             'window_title': 'Login',
             'page_title': 'Login to Arcfire.',
-            'parent_pages': parent_pages
         })
         return context
 
@@ -129,13 +120,83 @@ class LogoutView(RedirectView):
         return super(LogoutView, self).get(request, *args, **kwargs)
 
 
+class SearchView(TemplateView):
+    '''
+    Results from search.
+    '''
+    template_name = "arcfire/search_results.html"
+
+    def dispatch(self, *args, **kwargs):
+        '''
+        Setup
+        '''
+        self.searches = [
+            {'model': Event,    'fields': ['name', 'slug']},
+            {'model': Keyword,  'fields': ['name', 'slug']},
+            {'model': Person,   'fields': ['name', 'slug']},
+            {'model': Picture,  'fields': ['name', 'slug']},
+            {'model': Place,    'fields': ['name', 'slug']},
+            {'model': Plan,     'fields': ['name', 'slug']},
+            {'model': Property, 'fields': ['name', 'slug']},
+            {'model': Thing,    'fields': ['name', 'slug']},
+        ]
+        return super(SearchView, self).dispatch(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        '''
+        Process site-wide search form.
+        '''
+        get_copy = self.request.GET.copy()
+        query_string = ''
+
+        # we're ok concatenating all query objects into a string,
+        # because get_query will split them up anyways, and we don't want 
+        # to do more than one query (per model).
+        # Besides, this is only a boolean AND search, so we're not too picky.
+        if get_copy:
+            query_string = ' '.join(get_copy.pop('q', None))
+
+        # do the search, once for each relevant model, and save in instance
+        for dictionary in self.searches:
+            model = dictionary['model']
+            query = get_query(query_string, dictionary['fields'])
+            if query_string:
+                found = model.objects.filter(query)
+            else:
+                found = model.objects.all()
+
+            # pass to get_context_data
+            dictionary['result_set'] = found 
+
+        return super(SearchView, self).get(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(
+            SearchView, self).get_context_data(*args, **kwargs)
+
+        # populate search results
+        for search_result in self.searches:
+            model = search_result['model']
+            instance = model() # need to instantiate to call class variables
+            search_result.update({
+                'model_name_plural': model._meta.verbose_name_plural.title(),
+                'model_url': instance.get_list_url()
+            })
+
+        context.update({
+            'window_title': 'Search Results',
+            'page_title': 'Search Results.',
+            'search_results': self.searches
+        })
+        return context
+
+
 class ModelView(NavMixin, DetailView):
     '''
     Single model pages.
     Second level after Home.
     '''
     template_name = "arcfire/model.html"
-    # parent_view = HomeView
 
     def dispatch(self, *args, **kwargs):
         # Override dispatch to set model instance variable.

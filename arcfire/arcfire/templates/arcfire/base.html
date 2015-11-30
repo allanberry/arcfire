@@ -27,16 +27,28 @@
 
 </head>
 <body>
+    <header>
+    {% block header %}
+        <h2 id="site_title"><a href="{% url 'home' %}">Arcfire</a></h2>
+        
+        <div id="site_search">
+        {% block site_search %}
+            <form id="site_search_form" action="{% url 'search' %}" method="get">
+                <label for="site_search_input">Site Search</label>
+                <input id="site_search_input" type="search" name="q" placeholder="Terms">
+                <input type="submit" value="Submit" />
+            </form>
+        {% endblock site_search %}
+        </div>
+    {% endblock header %}
+    </header>
+
     <main>
     {% block main %}
-        <section id="introduction">
-        {% block introduction %}
-            <h1 id="page_title">{{ page_title }}</h1>
-        {% endblock introduction %}
-        </section><!-- / #introduction -->
+        <h1 id="page_title">{{ page_title }}</h1>
 
         {% if messages %}
-        <section id="messages">
+        <div id="messages">
         {% block messages %}
             <h3 class="section_title" class="sr_only">Messages</h3>
             <ul>
@@ -45,7 +57,7 @@
             {% endfor %}
             </ul>
         {% endblock messages %}
-        </section><!-- / #messages -->
+        </div><!-- / #messages -->
         {% endif %}
 
         <section id="content">
@@ -61,7 +73,7 @@
         <h3>Navigation</h3>
 
         {% if nav_relative %}
-        <section id="nav_relative">
+        <div id="nav_relative">
         {% block nav_relative %}
             <h4>Relative</h4>
             <ul>
@@ -74,34 +86,40 @@
                 {% endfor %}
             </ul>
         {% endblock nav_relative %}
-        </section><!-- / #nav_relative -->
+        </div><!-- / #nav_relative -->
         {% endif %}
 
-        <section id="nav_absolute">
+        <div id="nav_absolute">
         {% block nav_absolute %}
             <h4>Absolute</h4>
             <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'search' %}">Search</a></li>
+                <br>
                 {% for m in nav_models %}
                 <li><a href="{% url m.url_name %}">{{ m.name_plural | title }}</a></li>
                 {% endfor %}
             </ul>
         {% endblock nav_absolute %}
-        </section><!-- / #nav_absolute -->
+        </div><!-- / #nav_absolute -->
 
-        <section id="nav_user">
-        {% block nav_user %}
-            <h4>User</h4>
+    {% endblock nav %}
+    </nav>
+
+    <footer>
+        <div id="user">
+        {% block user %}
+            <h3>User</h3>
             <ul>
                 {% if user.is_authenticated %}
+                    <li>Profile</li> <!-- TODO -->
                     <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="{% url 'login' %}">Login</a></li>
                 {% endif %}
             </ul>
-        {% endblock nav_user %}
-        </section><!-- / #nav_user -->
-
-    {% endblock nav %}
-    </nav>
+        {% endblock user %}
+        </div><!-- / #nav_user -->
+    </footer>
 </body>
 </html>
