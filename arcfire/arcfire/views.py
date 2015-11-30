@@ -124,7 +124,7 @@ class SearchView(TemplateView):
     '''
     Results from search.
     '''
-    template_name = "arcfire/search_results.html"
+    template_name = "arcfire/search.html"
 
     def dispatch(self, *args, **kwargs):
         '''
