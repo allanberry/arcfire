@@ -6,28 +6,12 @@ from django.core.urlresolvers import reverse
 from arcfire.models import *
 
 
-class ModelTestCase(TestUtils):
-    '''
-    This is to test whether models behave, and have correct properties.
-    '''
-    def setUp(self):
-        Event.objects.create(name="World War II", slug="world-war-ii")
-        Event.objects.create(name="War of 1812", slug="war-1812")
-
-    def test_events_exist(self):
-        '''
-        Events exist.
-        '''
-        events = Event.objects.all()
-        self.assertEqual(events.count(), 2)
-
-
-class TemplateTestCase(TestUtils):
+class TemplateGlobalTestCase(TestUtils):
     '''
     Basic tests to ensure templates are in order, and urls are accessible.
     '''
     def setUp(self):
-        self.c = Client()
+        c = Client()
         Event.objects.create(name="War of 1812", slug="war-1812")
         Keyword.objects.create(name="Wars", slug="wars")
         Person.objects.create(name="Napoleon", slug="napoleon")
@@ -38,37 +22,80 @@ class TemplateTestCase(TestUtils):
         Property.objects.create(name="Brown Hair", slug="brown-hair")
         Thing.objects.create(name="Curling Iron", slug="curling-iron")
 
+        # some canned responses
+        self.response_1 = c.get('/')
+        self.response_2 = c.get(reverse('home'))
+
+        responses = []
+        responses.append(c.get(reverse('home')))
+        responses.append(c.get(reverse('login')))
+
+        responses.append(c.get(reverse('event_list')))
+        responses.append(c.get(reverse('keyword_list')))
+        responses.append(c.get(reverse('person_list')))
+        responses.append(c.get(reverse('picture_list')))
+        responses.append(c.get(reverse('place_list')))
+        responses.append(c.get(reverse('plan_list')))
+        responses.append(c.get(reverse('property_list')))
+        responses.append(c.get(reverse('thing_list')))
+
+        responses.append(c.get(reverse('event', args=['war-1812'])))
+        responses.append(c.get(reverse('keyword', args=['wars'])))
+        responses.append(c.get(reverse('person', args=['napoleon'])))
+        responses.append(c.get(reverse('picture', args=['demoiselles'])))
+        responses.append(c.get(reverse('place', args=['north-pole'])))
+        responses.append(c.get(reverse('plan', args=['elevation'])))
+        responses.append(c.get(reverse('property', args=['brown-hair'])))
+        responses.append(c.get(reverse('thing', args=['curling-iron'])))
+
+        
+        self.c = c
+        self.responses = responses
+
     def test_home(self):
         '''
         Home page should load.
         '''
-        response_1 = self.c.get('/')
-        response_2 = self.c.get(reverse('home'))
 
-        self.assertEqual(response_1.status_code, 200)
-        self.assertEqual(response_2.status_code, 200)
-        self.assertEqual(response_1.content, response_2.content)
+        self.assertEqual(self.response_1.status_code, 200)
+        self.assertEqual(self.response_2.status_code, 200)
+        self.assertEqual(self.response_1.content, self.response_2.content)
 
         self.assert_in_html(
-            response_1, '#page_title', ['Welcome to Arcfire.'], ['Flurble.'])
+            self.response_1, '#page_title', ['Welcome to Arcfire.'], ['Flurble.'])
 
     def test_urls(self):
         '''
         Primary urls should load.
         '''
+
+        for r in self.responses:
+            # check that each url works
+            self.assertEqual(r.status_code, 200)
+
+            # decode and make sure each has basic elements
+            self.assert_in_html(r, 'nav > div#nav_container > h3',
+                ['Navigation'])
+
+    def test_header(self):
+        '''Header should exist on every page, and should have all the correct links.'''
+        for r in self.responses:
+            self.assert_in_html(r, 'header #site_title',
+                ['Arcfire'], ['Flurble.'])
+            self.assert_in_html(r, 'header #site_search',
+                ['Search'])
+
+
+    def test_footer(self):
+        '''Footer should exist, and should have all correct links.'''
+        for r in self.responses:
+            self.assert_in_html(r, 'footer #user',
+                ['User'])
+
+    # results in templates
+    def test_nav_relative_model(self):
+        '''Model pages should each have relative navigation.'''
         responses = []
-        responses.append(self.c.get(reverse('home')))
-        responses.append(self.c.get(reverse('login')))
-
-        responses.append(self.c.get(reverse('event_list')))
-        responses.append(self.c.get(reverse('keyword_list')))
-        responses.append(self.c.get(reverse('person_list')))
-        responses.append(self.c.get(reverse('picture_list')))
-        responses.append(self.c.get(reverse('place_list')))
-        responses.append(self.c.get(reverse('plan_list')))
-        responses.append(self.c.get(reverse('property_list')))
-        responses.append(self.c.get(reverse('thing_list')))
-
         responses.append(self.c.get(reverse('event', args=['war-1812'])))
         responses.append(self.c.get(reverse('keyword', args=['wars'])))
         responses.append(self.c.get(reverse('person', args=['napoleon'])))
@@ -78,27 +105,35 @@ class TemplateTestCase(TestUtils):
         responses.append(self.c.get(reverse('property', args=['brown-hair'])))
         responses.append(self.c.get(reverse('thing', args=['curling-iron'])))
 
-
         for r in responses:
-            # check that each url works
-            self.assertEqual(r.status_code, 200)
+            self.assert_in_html(r, 'nav > #nav_relative > ul',
+                ['Home', 'Up', 'First', 'Last'])
 
-            # decode and make sure each has basic elements
-            self.assert_in_html(r, 'nav > div#nav_container > h3',
-                ['Navigation'], ['Flurble.'])
-
-    def test_header(self):
-        '''Header should exist, and should have all correct links.'''
+    def test_nav_relative_model_list(self):
         pass
 
-    def test_footer(self):
-        '''Footer should exist, and should have all correct links.'''
+    def test_nav_absolute(self):
         pass
 
+    # views working correctly
+    def test_get_nav_relative(self):
+        pass
 
-class UserTestCase(TestUtils):
+    def test_get_model_template(self):
+        pass
+
+    def test_get_template_names(self):
+        pass
+
+# test messages
+
+# test templates extend
+
+
+
+class AuthCase(TestUtils):
     '''
-    Tests covering users, auth, and other account-type stuff.
+    Tests covering auth, and other account-type stuff.
     '''
 
     def setUp(self):
@@ -147,47 +182,3 @@ class UserTestCase(TestUtils):
         # Logout
         self.c.get(reverse('logout'))
         self.assertEqual(self.c.session.get('_auth_user_id'), None)
-
-
-class NavigationTestCase(TestUtils):
-    '''
-    Tests covering main context processors and relative and absolute navigation pages.
-    '''
-
-    def test_arcfire_global_context(self):
-        pass
-
-    def get_model_url(self):
-        pass
-
-    # results in templates
-    def test_nav_relative_model(self):
-        pass
-
-    def test_rnav_elative_model_list(self):
-        pass
-
-    def test_nav_absolute(self):
-        pass
-
-    # views working correctly
-    def test_get_nav_relative(self):
-        pass
-
-    def test_get_model_template(self):
-        pass
-
-    def test_get_template_names(self):
-        pass
-
-# test messages
-
-# test templates extend
-
-
-class SearchTestCase(TestUtils):
-    '''
-    Tests covering search, both in rendered pages and behind the scenes.
-    '''
-    def test_results_page(self):
-        pass

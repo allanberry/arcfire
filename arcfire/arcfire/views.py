@@ -24,7 +24,7 @@ import inflection
 class NavMixin(object):
     '''
     Mixin for shared functionality across views.
-    Currently this is only used in ModelView, but I'd like to expand its use.
+    TODO: Currently this is only used in ModelView, but I'd like to expand its use.
     '''
 
     def get_nav_relative(self, *args, **kwargs):
@@ -171,6 +171,9 @@ class SearchView(TemplateView):
         return super(SearchView, self).get(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
+        '''
+        Display Search Results.
+        '''
         context = super(
             SearchView, self).get_context_data(*args, **kwargs)
 
