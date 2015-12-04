@@ -4,6 +4,7 @@ import factory
 from .TestUtils import TestUtils
 from django.core.urlresolvers import reverse
 from arcfire.models import *
+from arcfire.views import *
 
 
 class TemplateGlobalTestCase(TestUtils):
@@ -23,8 +24,6 @@ class TemplateGlobalTestCase(TestUtils):
         Thing.objects.create(name="Curling Iron", slug="curling-iron")
 
         # some canned responses
-        self.response_1 = c.get('/')
-        self.response_2 = c.get(reverse('home'))
 
         responses = []
         responses.append(c.get(reverse('home')))
@@ -48,7 +47,6 @@ class TemplateGlobalTestCase(TestUtils):
         responses.append(c.get(reverse('property', args=['brown-hair'])))
         responses.append(c.get(reverse('thing', args=['curling-iron'])))
 
-        
         self.c = c
         self.responses = responses
 
@@ -57,12 +55,23 @@ class TemplateGlobalTestCase(TestUtils):
         Home page should load.
         '''
 
-        self.assertEqual(self.response_1.status_code, 200)
-        self.assertEqual(self.response_2.status_code, 200)
-        self.assertEqual(self.response_1.content, self.response_2.content)
+        # test view
+        home = HomeView()
+        self.assertEqual(home.window_title(), 'Home')
+        self.assertEqual(home.page_title(), 'Welcome to Arcfire.')
+
+        # test client results
+        response_1 = self.c.get('/')
+        response_2 = self.c.get(reverse('home'))
+        response_1 == response_2
+        self.assertEqual(response_1.status_code, 200)
+        self.assertEqual(response_2.status_code, 200)
+        self.assertEqual(response_1.content, response_2.content)
 
         self.assert_in_html(
-            self.response_1, '#page_title', ['Welcome to Arcfire.'], ['Flurble.'])
+            response_1, '#page_title', ['Welcome to Arcfire.'], ['Flurble.'])
+
+
 
     def test_urls(self):
         '''

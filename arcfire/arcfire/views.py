@@ -45,14 +45,11 @@ class HomeView(TemplateView):
     '''
     template_name = "arcfire/home.html"
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(HomeView, self).get_context_data(*args, **kwargs)
+    def window_title(self):
+        return 'Home'
 
-        context.update({
-            'window_title': 'Home',
-            'page_title': 'Welcome to Arcfire.',
-        })
-        return context
+    def page_title(self):
+        return 'Welcome to Arcfire.'
 
 
 class LoginView(FormView):
