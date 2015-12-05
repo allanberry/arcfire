@@ -62,6 +62,12 @@ class LoginView(FormView):
     redirect_field_name = REDIRECT_FIELD_NAME
     template_name = "arcfire/login.html"
 
+    def window_title(self):
+        return 'Login'
+
+    def page_title(self):
+        return 'Login to Arcfire.'
+
     @method_decorator(sensitive_post_parameters('password'))
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
@@ -91,15 +97,6 @@ class LoginView(FormView):
 
         return redirect_to
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(LoginView, self).get_context_data(*args, **kwargs)
-
-        context.update({
-            'window_title': 'Login',
-            'page_title': 'Login to Arcfire.',
-        })
-        return context
-
 
 class LogoutView(RedirectView):
     '''
@@ -123,11 +120,21 @@ class SearchView(TemplateView):
     '''
     template_name = "arcfire/search.html"
 
-    def dispatch(self, *args, **kwargs):
+    def search_results(self):
         '''
-        Setup
+        Provide search results.
         '''
-        self.searches = [
+        get_copy = self.request.GET.copy()
+        query_string = ''
+        # we're ok concatenating all query objects into a string,
+        # because get_query will split them up anyways, and we don't want 
+        # to do more than one query (per model).
+        # Besides, this is only a boolean AND search, so we're not too picky.
+        if get_copy:
+            query_string = ' '.join(get_copy.pop('q', None))
+
+        # fields to search against for each model
+        searches = [
             {'model': Event,    'fields': ['name', 'slug']},
             {'model': Keyword,  'fields': ['name', 'slug']},
             {'model': Person,   'fields': ['name', 'slug']},
@@ -137,58 +144,32 @@ class SearchView(TemplateView):
             {'model': Property, 'fields': ['name', 'slug']},
             {'model': Thing,    'fields': ['name', 'slug']},
         ]
-        return super(SearchView, self).dispatch(*args, **kwargs)
-
-    def get(self, *args, **kwargs):
-        '''
-        Process site-wide search form.
-        '''
-        get_copy = self.request.GET.copy()
-        query_string = ''
-
-        # we're ok concatenating all query objects into a string,
-        # because get_query will split them up anyways, and we don't want 
-        # to do more than one query (per model).
-        # Besides, this is only a boolean AND search, so we're not too picky.
-        if get_copy:
-            query_string = ' '.join(get_copy.pop('q', None))
 
         # do the search, once for each relevant model, and save in instance
-        for dictionary in self.searches:
-            model = dictionary['model']
-            query = get_query(query_string, dictionary['fields'])
+        for d in searches:
+            model_class = d['model']
+            instance = model_class() # need to instantiate to call class variables
+            query = get_query(query_string, d['fields'])
+
+            # filter results by query if it exists
             if query_string:
-                found = model.objects.filter(query)
+                d['result_set'] = model_class.objects.filter(query)
             else:
-                found = model.objects.all()
-
-            # pass to get_context_data
-            dictionary['result_set'] = found 
-
-        return super(SearchView, self).get(*args, **kwargs)
-
-    def get_context_data(self, *args, **kwargs):
-        '''
-        Display Search Results.
-        '''
-        context = super(
-            SearchView, self).get_context_data(*args, **kwargs)
-
-        # populate search results
-        for search_result in self.searches:
-            model = search_result['model']
-            instance = model() # need to instantiate to call class variables
-            search_result.update({
-                'model_name_plural': model._meta.verbose_name_plural.title(),
+                d['result_set'] = model_class.objects.none()
+            
+            # add metadata for templates
+            d.update({
+                'model_name_plural': model_class._meta.verbose_name_plural.title(),
                 'model_url': instance.get_list_url()
             })
 
-        context.update({
-            'window_title': 'Search Results',
-            'page_title': 'Search Results.',
-            'search_results': self.searches
-        })
-        return context
+        return searches
+
+    def window_title(self):
+        return 'Search Results'
+
+    def page_title(self):
+        return 'Search Results'
 
 
 class ModelView(NavMixin, DetailView):

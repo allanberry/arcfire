@@ -1,10 +1,74 @@
 from .TestUtils import TestUtils
+from django.test import TestCase
 from arcfire.models import *
 
 
-class ModelTestCase(TestUtils):
+class RelationTestCase(TestCase):
     '''
-    This is to test whether models behave, and have correct properties.
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class LocationTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class KeywordTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class PropertyTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class PictureTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class PlanTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class ItemTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class EventTestCase(TestCase):
+    '''
+    Events.
     '''
     def setUp(self):
         Event.objects.create(name="World War II", slug="world-war-ii")
@@ -16,3 +80,48 @@ class ModelTestCase(TestUtils):
         '''
         events = Event.objects.all()
         self.assertEqual(events.count(), 2)
+
+
+class ThingTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class PlaceTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class PersonTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class CollectionTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass
+
+
+class GroupTestCase(TestCase):
+    '''
+    Relations.
+    '''
+
+    def setUp(self):
+        pass

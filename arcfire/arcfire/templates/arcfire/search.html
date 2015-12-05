@@ -3,7 +3,7 @@
 {% block content %}
 <p>Lists of various Models.</p>
 
-{% for search_result in search_results %}
+{% for search_result in view.search_results %}
 {% if search_result.result_set %}
 <p>{{ search_result.result_set.count }} <a href="{{ search_result.model_url }}">{{ search_result.model_name_plural }}</a> found:</p>
 {% with object_list=search_result.result_set %}

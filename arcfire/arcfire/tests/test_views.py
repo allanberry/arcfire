@@ -94,7 +94,6 @@ class TemplateGlobalTestCase(TestUtils):
             self.assert_in_html(r, 'header #site_search',
                 ['Search'])
 
-
     def test_footer(self):
         '''Footer should exist, and should have all correct links.'''
         for r in self.responses:
