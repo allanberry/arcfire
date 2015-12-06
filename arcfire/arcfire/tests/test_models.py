@@ -1,6 +1,7 @@
-from .TestUtils import TestUtils
 from django.test import TestCase
 from arcfire.models import *
+
+# it doesn't make much sense to fill this out until I have factories working correctly.
 
 
 class RelationTestCase(TestCase):

@@ -17,7 +17,6 @@ from arcfire.models import (
     Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
 from arcfire.search import get_query
 
-import inflection
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
 # with D1.9
 
@@ -71,17 +70,17 @@ class ViewMixin(object):
         A data structure to allow local wayfinding
         This defines the structure.  Meant to be heavily amended in subclass.
         '''
-        nav_relative = [
+        return [
             {'name': 'Home',
              'url': reverse_lazy('home')},
         ]
-        return nav_relative
 
     def page_title(self):
-        return 'Arcfire.'
+        return 'Arcfire'
 
     def window_title(self):
         return self.page_title()
+
 
 class HomeView(TemplateView):
     '''
@@ -92,7 +91,7 @@ class HomeView(TemplateView):
         return 'Home'
 
     def page_title(self):
-        return 'Welcome to Arcfire.'
+        return 'Welcome to Arcfire'
 
 
 class LoginView(FormView):
@@ -109,18 +108,22 @@ class LoginView(FormView):
         return 'Login'
 
     def page_title(self):
-        return 'Login to Arcfire.'
+        return 'Login to Arcfire'
 
     @method_decorator(sensitive_post_parameters('password'))
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
-        # Sets a test cookie to ensure cookies are enabled
+        '''
+        Sets a test cookie to ensure cookies are enabled.
+        '''
         request.session.set_test_cookie()
-
         return super(LoginView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
+        '''
+        On submission, check test cookie, and greet user.
+        '''
         auth_login(self.request, form.get_user())
 
         # If the test cookie worked, delete it since it's no longer needed
@@ -134,6 +137,9 @@ class LoginView(FormView):
         return super(LoginView, self).form_valid(form)
 
     def get_success_url(self):
+        '''
+        Redirect based upon request, checked for safety.
+        '''
         redirect_to = self.request.POST.get(self.redirect_field_name)
         if not is_safe_url(url=redirect_to, host=self.request.get_host()):
             redirect_to = self.success_url
@@ -163,12 +169,11 @@ class SearchView(ViewMixin, TemplateView):
     '''
     template_name = "arcfire/search.html"
 
-    def search_results(self):
+    def search_results(self, query_string=None):
         '''
         Provide search results.
         '''
         get_copy = self.request.GET.copy()
-        query_string = ''
         # we're ok concatenating all query objects into a string,
         # because get_query will split them up anyways, and we don't want 
         # to do more than one query (per model).
@@ -209,12 +214,13 @@ class ModelView(ViewMixin, DetailView):
     template_name = "arcfire/model.html"
 
     def dispatch(self, *args, **kwargs):
-        # Override dispatch to set model instance variable.
+        '''
+        Override dispatch to set model instance variable.
+        '''
         self.model = self.kwargs.pop('model')
-        
         return super(ModelView, self).dispatch(*args, **kwargs)  
 
-    def get_template_names(self, *args, **kwargs):   
+    def get_template_names(self, *args, **kwargs):
         # Provide a template to use; otherwise, use default.
         templates = [
             'arcfire/{}.html'.format(self.model._meta.verbose_name),
@@ -227,7 +233,9 @@ class ModelView(ViewMixin, DetailView):
         return templates
 
     def nav_relative(self, *args, **kwargs):
-        '''A data structure to allow local wayfinding'''
+        '''
+        Data structure to allow local wayfinding
+        '''
         nav_relative = super(ModelView, self).nav_relative(*args, **kwargs)
 
         # each dict is a link
@@ -270,7 +278,6 @@ class ModelListView(ViewMixin, ListView):
 
     # default template; should be able to (minimally) display any model
     template_name = 'arcfire/model_list.html'
-
 
     def dispatch(self, *args, **kwargs):
         # override dispatch to set model instance variable
