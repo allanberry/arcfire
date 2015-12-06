@@ -21,13 +21,52 @@ import inflection
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
 # with D1.9
 
-class NavMixin(object):
+
+class ViewMixin(object):
     '''
     Mixin for shared functionality across views.
-    TODO: Currently this is only used in ModelView, but I'd like to expand its use.
     '''
 
-    def get_nav_relative(self, *args, **kwargs):
+    def model_list(self):
+        '''
+        A shared data object.
+        '''
+        return [
+            {'model': Event,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/timeline.html',
+            },
+            {'model': Keyword,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/inline_list.html'
+            },
+            {'model': Person,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/network.html'
+            },
+            {'model': Picture,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/gallery.html'
+            },
+            {'model': Place,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/map.html'
+            },
+            {'model': Plan,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/gallery.html'
+            },
+            {'model': Property,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/tree.html'
+            },
+            {'model': Thing,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/glossary.html'
+            }
+        ]
+ 
+    def nav_relative(self, *args, **kwargs):
         '''
         A data structure to allow local wayfinding
         This defines the structure.  Meant to be heavily amended in subclass.
@@ -38,13 +77,17 @@ class NavMixin(object):
         ]
         return nav_relative
 
+    def page_title(self):
+        return 'Arcfire.'
+
+    def window_title(self):
+        return self.page_title()
 
 class HomeView(TemplateView):
     '''
     The main home page.
     '''
     template_name = "arcfire/home.html"
-
     def window_title(self):
         return 'Home'
 
@@ -114,7 +157,7 @@ class LogoutView(RedirectView):
         return super(LogoutView, self).get(request, *args, **kwargs)
 
 
-class SearchView(TemplateView):
+class SearchView(ViewMixin, TemplateView):
     '''
     Results from search.
     '''
@@ -133,23 +176,12 @@ class SearchView(TemplateView):
         if get_copy:
             query_string = ' '.join(get_copy.pop('q', None))
 
-        # fields to search against for each model
-        searches = [
-            {'model': Event,    'fields': ['name', 'slug']},
-            {'model': Keyword,  'fields': ['name', 'slug']},
-            {'model': Person,   'fields': ['name', 'slug']},
-            {'model': Picture,  'fields': ['name', 'slug']},
-            {'model': Place,    'fields': ['name', 'slug']},
-            {'model': Plan,     'fields': ['name', 'slug']},
-            {'model': Property, 'fields': ['name', 'slug']},
-            {'model': Thing,    'fields': ['name', 'slug']},
-        ]
-
         # do the search, once for each relevant model, and save in instance
+        searches = self.model_list()
         for d in searches:
             model_class = d['model']
             instance = model_class() # need to instantiate to call class variables
-            query = get_query(query_string, d['fields'])
+            query = get_query(query_string, d['search_fields'])
 
             # filter results by query if it exists
             if query_string:
@@ -165,14 +197,11 @@ class SearchView(TemplateView):
 
         return searches
 
-    def window_title(self):
-        return 'Search Results'
-
     def page_title(self):
         return 'Search Results'
 
 
-class ModelView(NavMixin, DetailView):
+class ModelView(ViewMixin, DetailView):
     '''
     Single model pages.
     Second level after Home.
@@ -197,9 +226,9 @@ class ModelView(NavMixin, DetailView):
         
         return templates
 
-    def get_nav_relative(self, *args, **kwargs):
+    def nav_relative(self, *args, **kwargs):
         '''A data structure to allow local wayfinding'''
-        nav_relative = super(ModelView, self).get_nav_relative(*args, **kwargs)
+        nav_relative = super(ModelView, self).nav_relative(*args, **kwargs)
 
         # each dict is a link
         # must have property 'name'; others are optional
@@ -225,21 +254,14 @@ class ModelView(NavMixin, DetailView):
 
         return nav_relative
 
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(ModelView, self).get_context_data(*args, **kwargs)
-
-        nav_relative = self.get_nav_relative()
-
-        context.update({
-            'window_title': self.object.__str__().title(),
-            'page_title': self.object.__str__().title(),
-            'nav_relative': nav_relative,
-        })
-        return context
+    def window_title(self):
+        return self.object.__str__().title()
+    
+    def page_title(self):
+        return self.object.__str__().title()
 
 
-class ModelListView(ListView):
+class ModelListView(ViewMixin, ListView):
     '''
     An abstract class for compound model views: where models are seen in list 
     or group format.  
@@ -263,16 +285,7 @@ class ModelListView(ListView):
         '''
 
         # The best template for presenting any particular model list.
-        templates = [
-            {'model': Event,    'template': 'arcfire/timeline.html'},
-            {'model': Keyword,  'template': 'arcfire/inline_list.html'},
-            {'model': Person,   'template': 'arcfire/network.html'},
-            {'model': Picture,  'template': 'arcfire/gallery.html'},
-            {'model': Place,    'template': 'arcfire/map.html'},
-            {'model': Plan,     'template': 'arcfire/gallery.html'},
-            {'model': Property, 'template': 'arcfire/tree.html'},
-            {'model': Thing,    'template': 'arcfire/glossary.html'},
-        ]
+        templates = self.model_list()
 
         # add relevant template to start of template list
         model_template_dict = next(
@@ -295,14 +308,14 @@ class ModelListView(ListView):
 
         return templates
 
+    def window_title(self): 
+        return self.model._meta.verbose_name_plural.title()
+    
+    def page_title(self):
+        return self.model._meta.verbose_name_plural.title()
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(ModelListView, self).get_context_data(*args, **kwargs)
+    def model_name(self):
+        return self.model._meta.verbose_name
 
-        context.update({
-            'window_title': self.model._meta.verbose_name_plural.title(),
-            'page_title': self.model._meta.verbose_name_plural.title(),
-            'model_name': self.model._meta.verbose_name,
-            'model_name_plural': self.model._meta.verbose_name_plural,
-        })
-        return context
+    def model_name_plural(self):
+        return self.model._meta.verbose_name_plural

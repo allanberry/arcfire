@@ -1,7 +1,7 @@
 {% extends 'arcfire/base.html' %}
 
 {% block content %}
-<p>A List of {{ model_name_plural | title }}.</p>
+<p>A List of {{ view.model_name_plural | title }}.</p>
 
 {% include 'arcfire/partials/object_list.html' %}
 
