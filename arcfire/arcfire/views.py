@@ -169,7 +169,7 @@ class SearchView(ViewMixin, TemplateView):
     '''
     template_name = "arcfire/search.html"
 
-    def search_results(self, query_string=None):
+    def search_results(self, query_string=''):
         '''
         Provide search results.
         '''
