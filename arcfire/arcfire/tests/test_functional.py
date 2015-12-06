@@ -78,6 +78,7 @@ class GlobalTestCase(HTMLResultMixin, TestCase):
         responses.append(self.c.get(reverse('plan_list')))
         responses.append(self.c.get(reverse('property_list')))
         responses.append(self.c.get(reverse('thing_list')))
+        responses.append(self.c.get(reverse('search')))
         self.responses = responses
 
         # the following response subset separated out,

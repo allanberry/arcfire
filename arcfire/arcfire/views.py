@@ -199,7 +199,6 @@ class SearchView(ViewMixin, TemplateView):
                 'model_name_plural': model_class._meta.verbose_name_plural.title(),
                 'model_url': instance.get_list_url()
             })
-
         return searches
 
     def page_title(self):
