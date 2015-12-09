@@ -7,7 +7,7 @@ from rest_framework import routers, serializers, viewsets
 from arcfire.views.core import (
     HomeView, LoginView, LogoutView, SearchView, ModelView, ModelListView)
 from arcfire.models import (
-    Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
+    Event, Keyword, Person, Picture, Place, Plan, Property, Thing, Card)
 
 
 
@@ -39,6 +39,8 @@ urlpatterns = [
         kwargs={'model':Property}, name='property_list'),
     url(r'^thing$', ModelListView.as_view(),
         kwargs={'model':Thing}, name='thing_list'),
+    url(r'^card$', ModelListView.as_view(),
+        kwargs={'model':Card}, name='card_list'),
 
     # other compound model views
     url(r'^search$', SearchView.as_view(),
@@ -61,5 +63,7 @@ urlpatterns = [
         kwargs={'model':Property}, name='property'),
     url(r'^things/(?P<slug>[-\w]+)$', ModelView.as_view(),
         kwargs={'model':Thing}, name='thing'),
+    url(r'^cards/(?P<slug>[-\w]+)$', ModelView.as_view(),
+        kwargs={'model':Card}, name='card'),
 
 ]

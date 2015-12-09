@@ -62,6 +62,10 @@ class ViewMixin(object):
             {'model': Thing,
              'search_fields': ['name', 'slug'],
              'template': 'arcfire/glossary.html'
+            },
+            {'model': Card,
+             'search_fields': ['name', 'slug'],
+             'template': 'arcfire/tree.html'
             }
         ]
  

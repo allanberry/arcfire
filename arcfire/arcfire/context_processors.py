@@ -9,6 +9,7 @@ models_list = [
     Plan,
     Property,
     Thing,
+    Card,
 ]
 
 def arcfire_global_context(request):
@@ -42,6 +43,7 @@ def get_model_url(model):
         Plan: 'plan_list',
         Property: 'property_list',
         Thing: 'thing_list',
+        Card: 'card_list',
     }
 
     # TODO this functionality is already in models; refactor this out.  

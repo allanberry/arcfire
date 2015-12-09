@@ -55,8 +55,9 @@ class PersonAdmin(CommonAdmin):
     list_display = ('name', 'gender', 'slug')
     prepopulated_fields = {'slug': ('name', 'name_secondary')}
 
+
 @admin.register(Card)
-class PersonAdmin(CommonAdmin):
-    fields = ('name', 'text_format', 'text')
-    list_display = ('name', 'gender', 'slug')
-    prepopulated_fields = {'slug': ('name', 'name_secondary')}
+class CardAdmin(CommonAdmin):
+    fields = ('name', 'text_format', 'text', 'slug')
+    list_display = ('name', 'text_format', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
