@@ -1,5 +1,5 @@
 from django.test import TestCase, RequestFactory
-from arcfire.views import *
+from arcfire.views.core import *
 
 
 class GlobalViewTestCase(TestCase):

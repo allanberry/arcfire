@@ -1,7 +1,7 @@
 import json
 import lxml.html
 from arcfire.models import *
-from arcfire.views import *
+from arcfire.views.core import *
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
