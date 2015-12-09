@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Event, Keyword, Location, Person, Picture, Plan, Place, Property, Collection, Group
+from .models import Event, Keyword, Location, Person, Picture, Plan, Place, Property, Card
 
 class CommonAdmin(admin.ModelAdmin):
     fields = ('name', 'slug')
@@ -55,10 +55,8 @@ class PersonAdmin(CommonAdmin):
     list_display = ('name', 'gender', 'slug')
     prepopulated_fields = {'slug': ('name', 'name_secondary')}
 
-
-# # # # #
-# TODO  #
-# # # # #
-
-# Collection
-# Group
+@admin.register(Card)
+class PersonAdmin(CommonAdmin):
+    fields = ('name', 'text_format', 'text')
+    list_display = ('name', 'gender', 'slug')
+    prepopulated_fields = {'slug': ('name', 'name_secondary')}

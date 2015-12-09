@@ -90,19 +90,19 @@ class LifeMixin(models.Model):
         default=0.5, max_digits=4, decimal_places=3, help_text="Choose a number between 0.0 and 1.0.  The default is 0.5, which represents the life-force of Joe the Plumber.  0.0 is empty space, somewhere past Pluto.  1.0 is God himself. See wiki/ki for more information.") # TODO: wiki/ki
 
 
-class CompoundMixin(models.Model):
-    '''
-    Abstract base class for groups of elements.
-    '''
-    class Meta:
-        abstract = True
+# class CompoundMixin(models.Model):
+#     '''
+#     Abstract base class for groups of elements.
+#     '''
+#     class Meta:
+#         abstract = True
 
-    members = []
-    # I'm not entirely sure what I want to do with this yet, since fields need
-    # to be defined in each subclass instead of overridden.  This makes things
-    # more complex than I like, but probably OK.  In the meantime, I'll
-    # leave this here and give it methods soon, hopefully generic to work
-    # for all subclasses.
+#     members = []
+#     # I'm not entirely sure what I want to do with this yet, since fields need
+#     # to be defined in each subclass instead of overridden.  This makes things
+#     # more complex than I like, but probably OK.  In the meantime, I'll
+#     # leave this here and give it methods soon, hopefully generic to work
+#     # for all subclasses.
 
 
 class AspectMixin(models.Model):
@@ -264,7 +264,6 @@ class Plan(AspectMixin, Common):
 # Level 1: Basic Items  #
 # # # # # # # # # # # # #
 
-
 class Item(Common):
     '''
     The abstract attributes in "Common", but with access to subsequent models like picture and plan.
@@ -282,6 +281,21 @@ class Item(Common):
 
     scale = models.PositiveIntegerField(default=0, blank=True, null=True,
         help_text='The magnitude of a thing, in whole numbers.  0 is average/medium/normal/default/human-sized.  e.g.: -2=XS, -1=S, 0=M, 1=L, 2=XL, 3=2XL and so on.')
+
+
+class Card(Item):
+    '''
+    A sequential storytelling and organizing device, inspired by the index cards of writers.
+    '''
+
+    TEXT_FORMATS = (
+        ('md', 'Markdown (Git)'),
+        ('html', 'HTML'),
+    )
+
+    text = models.TextField(blank=True, null=True, help_text="This is a container for long-form prose, or whatever other type of content this card should have.")
+    text_format = models.CharField(max_length=10, choices=TEXT_FORMATS, blank=False, default='md')
+    sort_order = models.DecimalField(max_digits=12, decimal_places=6, help_text="Order in which this card appears (at its scale).  Lower numbers come first; negative numbers OK.  To slip a card between two other cards, use a decimal.")
 
 
 class Event(Item):
@@ -363,17 +377,16 @@ class Person(LifeMixin, Thing):
         return self.name_full()
 
 
-class Collection(CompoundMixin, Thing):
-    '''
-    A group of things.
-    '''
+# class Collection(CompoundMixin, Thing):
+#     '''
+#     A group of things.
+#     '''
 
 
-class Group(CompoundMixin, Person):
-    '''
-    A group of people.
-    '''
-
+# class Corpus(CompoundMixin, Person):
+#     '''
+#     A group of people.  Used to be called "Group", but it turns out that's a built-in Django class.
+#     '''
 
 # class Memory(Thing):
 #     '''

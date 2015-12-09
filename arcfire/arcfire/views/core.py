@@ -14,7 +14,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from arcfire.models import (
-    Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
+    Event, Keyword, Person, Picture, Place, Plan, Property, Thing, Card)
 from arcfire.search import get_query
 
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
