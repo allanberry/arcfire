@@ -1,68 +1,177 @@
 from django.http import Http404
 
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from arcfire.models import Card
+from arcfire.models import (
+    Card, Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
+from arcfire.serializers import (
+    CardSerializer, EventSerializer, KeywordSerializer, PersonSerializer, 
+    PictureSerializer, PlaceSerializer, PlanSerializer, PropertySerializer,
+    ThingSerializer)
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 
-class CardSerializer(serializers.ModelSerializer):
-    '''
-    JSON serializer for Cards.
-    '''
-
-    class Meta:
-        model = Card
-        fields = (
-            'pk', 'name', 'text',
-            #'relations', 'locations',
-            'keywords', 'properties', 'pictures', 'plans',
-            'scale', 'text_format', 'sort_order')
-
-
-class CardViewJson(APIView):
+# cards
+class CardView(RetrieveUpdateDestroyAPIView):
     '''
     Card in JSON format.
     '''
-    def get_object(self, pk):
-        try:
-            return Card.objects.get(pk=pk)
-        except Card.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        card = self.get_object(pk)
-        serializer = CardSerializer(card)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        card = self.get_object(pk)
-        serializer = CardSerializer(card, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        card = self.get_object(pk)
-        card.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
 
 
-class CardListViewJson(APIView):
+class CardListView(ListCreateAPIView):
     '''
     List of Cards in JSON format.
     '''
-    def get(self, request, format=None):
-        cards = Card.objects.all()
-        serializer = CardSerializer(cards, many=True)
-        return Response(serializer.data)
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
 
-    def post(self, request, format=None):
-        serializer = CardSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# events
+class EventView(RetrieveUpdateDestroyAPIView):
+    '''
+    Event in JSON format.
+    '''
+    lookup_field = 'slug'
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+
+class EventListView(ListCreateAPIView):
+    '''
+    List of Events in JSON format.
+    '''
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+
+# keywords
+class KeywordView(RetrieveUpdateDestroyAPIView):
+    '''
+    Keyword in JSON format.
+    '''
+    lookup_field = 'slug'
+    queryset = Keyword.objects.all()
+    serializer_class = KeywordSerializer
+
+
+class KeywordListView(ListCreateAPIView):
+    '''
+    List of Keywords in JSON format.
+    '''
+    queryset = Keyword.objects.all()
+    serializer_class = KeywordSerializer
+
+
+# people
+class PersonView(RetrieveUpdateDestroyAPIView):
+    '''
+    Person in JSON format.
+    '''
+    lookup_field = 'slug'
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+
+
+class PersonListView(ListCreateAPIView):
+    '''
+    List of People in JSON format.
+    '''
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+
+
+# pictures
+class PictureView(RetrieveUpdateDestroyAPIView):
+    '''
+    Pictures in JSON format.
+    '''
+    lookup_field = 'slug'
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+
+
+class PictureListView(ListCreateAPIView):
+    '''
+    List of Pictures in JSON format.
+    '''
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+
+
+# place
+class PlaceView(RetrieveUpdateDestroyAPIView):
+    '''
+    Place in JSON format.
+    '''
+    lookup_field = 'slug'
+    queryset = Place.objects.all()
+    serializer_class = PlaceSerializer
+
+
+class PlaceListView(ListCreateAPIView):
+    '''
+    List of Places in JSON format.
+    '''
+    queryset = Place.objects.all()
+    serializer_class = PlaceSerializer
+
+
+# plan
+class PlanView(RetrieveUpdateDestroyAPIView):
+    '''
+    Plan in JSON format.
+    '''
+    lookup_field = 'slug'
+    queryset = Plan.objects.all()
+    serializer_class = PlanSerializer
+
+
+class PlanListView(ListCreateAPIView):
+    '''
+    List of Plans in JSON format.
+    '''
+    queryset = Plan.objects.all()
+    serializer_class = PlanSerializer
+
+
+# property
+class PropertyView(RetrieveUpdateDestroyAPIView):
+    '''
+    Property in JSON format.
+    '''
+    lookup_field = 'slug'
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+
+
+class PropertyListView(ListCreateAPIView):
+    '''
+    List of Properties in JSON format.
+    '''
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+
+
+# thing
+class ThingView(RetrieveUpdateDestroyAPIView):
+    '''
+    Thing in JSON format.
+    '''
+    lookup_field = 'slug'
+    queryset = Thing.objects.all()
+    serializer_class = ThingSerializer
+
+
+class ThingListView(ListCreateAPIView):
+    '''
+    List of Things in JSON format.
+    '''
+    queryset = Thing.objects.all()
+    serializer_class = ThingSerializer
+
+
