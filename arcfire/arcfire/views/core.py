@@ -14,7 +14,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from arcfire.models import (
-    Event, Keyword, Person, Picture, Place, Plan, Property, Thing, Card)
+    Card, Event, Keyword, Person, Picture, Place, Plan, Property, Thing)
 from arcfire.search import get_query
 
 # import floppyforms as forms # TODO: wait until FF 1.6, which is compatible
@@ -86,7 +86,7 @@ class ViewMixin(object):
         return self.page_title()
 
 
-class HomeView(TemplateView):
+class HomeView(ViewMixin, TemplateView):
     '''
     The main home page.
     '''
@@ -98,7 +98,7 @@ class HomeView(TemplateView):
         return 'Welcome to Arcfire'
 
 
-class LoginView(FormView):
+class LoginView(ViewMixin, FormView):
     '''
     Provides login with a username and password.
     https://coderwall.com/p/sll1kw/django-auth-class-based-views-login-and-logout
