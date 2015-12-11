@@ -3,8 +3,6 @@ require 'compass/import-once/activate'
 # allows to import CSS files directly, to save HTTP requests.
 require 'sass-css-importer'
 
-# Require any additional compass plugins here.
-
 # Set this to the root of your project when deployed:
 http_path = "/"
 css_dir = "css"
