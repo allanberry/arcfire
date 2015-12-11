@@ -56,7 +56,7 @@ urlpatterns = [
         name='card'),
     url(r'^api/cards/(?P<slug>[-\w]+)$',
         api.CardView.as_view(),
-        name='card_json'),
+        name='card_api'),
 
     # event
     url(r'^events/(?P<slug>[-\w]+)$',
@@ -65,7 +65,7 @@ urlpatterns = [
         name='event'),
     url(r'^api/events/(?P<slug>[-\w]+)$',
         api.EventView.as_view(),
-        name='event_json'),
+        name='event_api'),
     
     # keyword
     url(r'^keywords/(?P<slug>[-\w]+)$',
@@ -74,7 +74,7 @@ urlpatterns = [
         name='keyword'),
     url(r'^api/keywords/(?P<slug>[-\w]+)$',
         api.KeywordView.as_view(),
-        name='keyword_json'),
+        name='keyword_api'),
     
     # person
     url(r'^people/(?P<slug>[-\w]+)$',
@@ -83,7 +83,7 @@ urlpatterns = [
         name='person'),
     url(r'^api/people/(?P<slug>[-\w]+)$',
         api.PersonView.as_view(),
-        name='person_json'),
+        name='person_api'),
 
     # picture
     url(r'^pictures/(?P<slug>[-\w]+)$',
@@ -92,7 +92,7 @@ urlpatterns = [
         name='picture'),
     url(r'^api/pictures/(?P<slug>[-\w]+)$',
         api.PictureView.as_view(),
-        name='picture_json'),
+        name='picture_api'),
 
     # place
     url(r'^places/(?P<slug>[-\w]+)$',
@@ -101,7 +101,7 @@ urlpatterns = [
         name='place'),
     url(r'^api/places/(?P<slug>[-\w]+)$',
         api.PlaceView.as_view(),
-        name='place_json'),
+        name='place_api'),
 
     # plan
     url(r'^plans/(?P<slug>[-\w]+)$',
@@ -110,7 +110,7 @@ urlpatterns = [
         name='plan'),
     url(r'^api/plans/(?P<slug>[-\w]+)$',
         api.PlanView.as_view(),
-        name='plan_json'),
+        name='plan_api'),
 
     # property
     url(r'^properties/(?P<slug>[-\w]+)$',
@@ -119,7 +119,7 @@ urlpatterns = [
         name='property'),
     url(r'^api/properties/(?P<slug>[-\w]+)$',
         api.PropertyView.as_view(),
-        name='property_json'),
+        name='property_api'),
 
     # thing
     url(r'^things/(?P<slug>[-\w]+)$',
@@ -128,7 +128,7 @@ urlpatterns = [
         name='thing'),
     url(r'^api/things/(?P<slug>[-\w]+)$',
         api.ThingView.as_view(),
-        name='thing_json'),
+        name='thing_api'),
 
 
     # # # # # # # #
@@ -142,7 +142,7 @@ urlpatterns = [
         name='card_list'),
     url(r'^api/cards$',
         api.CardListView.as_view(),
-        name='card_list_json'),
+        name='card_list_api'),
 
     # events
     url(r'^events$',
@@ -151,7 +151,7 @@ urlpatterns = [
         name='event_list'),
     url(r'^api/events$',
         api.EventListView.as_view(),
-        name='event_list_json'),
+        name='event_list_api'),
 
     # keywords
     url(r'^keywords$',
@@ -160,7 +160,7 @@ urlpatterns = [
         name='keyword_list'),
     url(r'^api/keywords$',
         api.KeywordListView.as_view(),
-        name='keyword_list_json'),
+        name='keyword_list_api'),
 
     # people
     url(r'^people$',
@@ -169,7 +169,7 @@ urlpatterns = [
         name='person_list'),
     url(r'^api/people$',
         api.PersonListView.as_view(),
-        name='person_list_json'),
+        name='person_list_api'),
 
     # pictures
     url(r'^pictures$',
@@ -178,7 +178,7 @@ urlpatterns = [
         name='picture_list'),
     url(r'^api/pictures$',
         api.PictureListView.as_view(),
-        name='picture_list_json'),
+        name='picture_list_api'),
 
     # places
     url(r'^places$',
@@ -187,7 +187,7 @@ urlpatterns = [
         name='place_list'),
     url(r'^api/places$',
         api.PlaceListView.as_view(),
-        name='place_list_json'),
+        name='place_list_api'),
 
     # plans
     url(r'^plans$',
@@ -196,7 +196,7 @@ urlpatterns = [
         name='plan_list'),
     url(r'^api/plans$',
         api.PlanListView.as_view(),
-        name='plan_list_json'),
+        name='plan_list_api'),
 
     # properties
     url(r'^properties$',
@@ -205,7 +205,7 @@ urlpatterns = [
         name='property_list'),
     url(r'^api/properties$',
         api.PropertyListView.as_view(),
-        name='property_list_json'),
+        name='property_list_api'),
 
     # things
     url(r'^things$',
@@ -214,5 +214,5 @@ urlpatterns = [
         name='thing_list'),
     url(r'^api/things$',
         api.ThingListView.as_view(),
-        name='thing_list_json'),
+        name='thing_list_api'),
 ]

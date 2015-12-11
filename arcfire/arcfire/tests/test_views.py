@@ -54,7 +54,7 @@ class ViewMixinTestCase(TestCase):
         Should support all major models and other view methods. 
         '''
         model_list = self.obj.model_list()
-        self.assertEqual(len(model_list), 8)
+        self.assertEqual(len(model_list), 9)
         for d in model_list:
             self.assertTrue('model' in d.keys())
             self.assertTrue('search_fields' in d.keys())
