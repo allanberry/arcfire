@@ -90,8 +90,11 @@ Finally, apply the existing migrations to the database, and you should be ready 
 
 #### In development
 
-
 * ``./manage.py runserver --settings=core.settings.dev``
+
+In order to do frontend work, you will need to install and start Compass (to convert SCSS into CSS on the fly).  [Installation instructions for Compass](http://compass-style.org/install/).  Running the Compass monitor will require its own terminal window:
+
+* ``compass watch arcfire/static/arcfire``
 
 #### In production (only on WebFaction)
 

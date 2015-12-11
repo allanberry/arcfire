@@ -1,0 +1,57 @@
+// Bower imports
+@import "CSS:../bower_components/normalize-css/normalize";
+
+/* * * * */
+/* BASIC */
+/* * * * */
+
+body {
+    padding: 1rem;
+}
+
+
+/* * * * * */
+/* FIGURE  */
+/* * * * * */
+
+#page_title {}
+
+
+/* * * * * */
+/* GROUND  */
+/* * * * * */
+
+main {}
+
+main #map svg {
+    border: 1px solid silver;
+    background-color: white;
+}
+
+main #map .graticule {
+    fill: none;
+    stroke: #777;
+    stroke-width: .5px;
+    stroke-opacity: .5;
+}
+
+main #map .land {
+    fill: black;
+}
+
+nav {}
+
+
+/* * * * * */
+/* UTILITY */
+/* * * * * */
+
+.sr_only {
+    position: absolute;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
